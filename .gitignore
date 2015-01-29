@@ -1,0 +1,5 @@
+bin/*
+.cbp
+obj/
+Graphics.layout
+Graphics.depend
