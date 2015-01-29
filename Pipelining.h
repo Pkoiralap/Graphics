@@ -4,15 +4,16 @@
 #include "MatVec.h"
 
 
-Vec2 World_To_Pixel(const Vec3& source ,        //World pofloat to convert floato pixel pofloat
-                        const Vec3& camera,     //Pofloat from where you are watching
+Vec2 World_To_Pixel(const Vec3& source ,          //World pofloat to convert floato pixel pofloat
+                        const Vec3& camera,       //Point from where you are watching
+                        const Vec3& LookTo,       //Where are we looking at from the camera pos
                         float planeWidth,         //width of the perspective plane
                         float planeHeight,        //height of the perspectice plane
                         float winWidth,           //width of the screen window
                         float winHeight);         //height of the screen window
 
 
-Vec2 World_To_Pixel(const Vec3& source ,const Vec3& camera,float planeWidth, float planeHeight, float winWidth, float winHeight){
+Vec2 World_To_Pixel(const Vec3& source ,const Vec3& camera, const Vec3 LookTo,float planeWidth, float planeHeight, float winWidth, float winHeight){
     //first determine the World to Camera transforming matrix
     Matrix WtoC(4,4);
     //for that use the concept of N, U and V unit vectors
@@ -20,7 +21,7 @@ Vec2 World_To_Pixel(const Vec3& source ,const Vec3& camera,float planeWidth, flo
 
     //calculate the N unit vector
 
-    N = source - camera;
+    N = LookTo - camera;
     N = N/ N.magnitude();
 
     //U = V X N
@@ -30,6 +31,11 @@ Vec2 World_To_Pixel(const Vec3& source ,const Vec3& camera,float planeWidth, flo
 
     //readjust the V vector
     V = N.crossProduct(U);
+//
+//    std::cout << U.x << " "<< U.y << " "<< U.z << std::endl;
+//    std::cout << V.x << " "<< V.y << " "<< V.z << std::endl;
+//    std::cout << N.x << " "<< N.y << " "<< N.z << std::endl;
+//    std::cout << std::endl <<std::endl ;
 
     //Transpose matrix from World co-ordinate to View co-ordinate
     Matrix T(4,4);
@@ -46,16 +52,18 @@ Vec2 World_To_Pixel(const Vec3& source ,const Vec3& camera,float planeWidth, flo
     R(3,0) = 0 ; R(3,1) = 0; R(3,2) = 0; R(3,3) = 1;
 
     //Calculating the WtoC matrix W = T*R (rotate and then translate)
-    WtoC = T*R;
-
-    WtoC.print();
+    WtoC = R*T;
+//
+//    std::cout << std::endl << " MATRIX START" << std::endl;
+//    WtoC.print();
+//    std::cout <<"MATRIX END"<< std::endl << std::endl;
 
     Matrix S(4,1); //The source point in matrix form
     S(0) = source.x ; S(1) = source.y; S(2) = source.z ; S(3) = 1;
 
     S = WtoC * S;
     //S now represents the camera co-ordinate system's values
-
+    std::cout << S(0) << " " << S(1) << " "<<S(2) <<std::endl;
     //calculate the screen pixels
     Vec2 retVal;
     retVal.x = S(0) / -S(2);
