@@ -95,12 +95,9 @@ void Object3d::LoadObject(string filename){
 }
 
 
-void Object3d::drawWire(){
+void Object3d::drawWire(Vec3& camera,Vec3& LookTo){
     Screen S(1024,840);
-    Vec3 camera(25,25,25);
     Color C(255,255,255);
-    Vec3 LookTo(0,0,0);
-
     unsigned int len = vertBuffer.size();
     Vec2 v[len];
     for (unsigned int i=0;i<len;i++)
@@ -126,6 +123,5 @@ void Object3d::drawWire(){
     }
 
     S.refresh();
-    S.WaitQuit();
 }
 

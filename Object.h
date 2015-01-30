@@ -60,7 +60,7 @@ class Object3d{
         void addNormal(Vec3& v){normBuffer.push_back(v);}
         void addTexture(Vec2& v){textureBuffer.push_back(v);}
         void render();
-        void drawWire();
+        void drawWire(Vec3& camera,Vec3& LookTo);
         void SaveObject(string filename);
         void LoadObject(string filename);
 };

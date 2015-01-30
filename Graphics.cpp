@@ -52,46 +52,45 @@ int main(){
     Vec3 LookTo(0,0,0);
     Object3d obj;
     obj.LoadObject("teapot.obj");
-    obj.drawWire();
 
 //
-//    SDL_Event event;
-//
-//    while (1)
-//    {
-//       draw(camera,LookTo);
-//        while(SDL_PollEvent(&event))
-//        {
-//            switch(event.type)
-//            {
-//                case SDL_KEYDOWN:
-//                switch (event.key.keysym.sym){
-//                    case SDLK_a:
-//                        camera.x -= 1;
-//                        break;
-//                    //Triggered for keydown
-//                    case SDLK_s:
-//                        camera.y -= 1;
-//                        break;
-//                    case SDLK_d:
-//                        camera.x += 1;
-//                        break;
-//                    case SDLK_w:
-//                        camera.y += 1;
-//                        break;
-//                    case SDLK_z:
-//                        camera.z += 1;
-//                        break;
-//                    case SDLK_x:
-//                        camera.z -= 1;
-//                        break;
-//                    case SDLK_ESCAPE:
-//                        goto outside;
-//                        break;
-//                }
-//            }
-//        }
-//    }
+    SDL_Event event;
+
+    while (1)
+    {
+        obj.drawWire(camera,LookTo);
+        while(SDL_PollEvent(&event))
+        {
+            switch(event.type)
+            {
+                case SDL_KEYDOWN:
+                switch (event.key.keysym.sym){
+                    case SDLK_a:
+                        camera.x -= 1;
+                        break;
+                    //Triggered for keydown
+                    case SDLK_s:
+                        camera.y -= 1;
+                        break;
+                    case SDLK_d:
+                        camera.x += 1;
+                        break;
+                    case SDLK_w:
+                        camera.y += 1;
+                        break;
+                    case SDLK_z:
+                        camera.z += 1;
+                        break;
+                    case SDLK_x:
+                        camera.z -= 1;
+                        break;
+                    case SDLK_ESCAPE:
+                        goto outside;
+                        break;
+                }
+            }
+        }
+    }
     outside: SDL_Quit();
     return 0;
 
