@@ -1,10 +1,10 @@
 #ifndef OBJECT_H_
 #define OBJECT_H_
 
-#include "Pipelining.h"
 #include "Graphics.h"
 #include "MatVec.h"
 #include <vector>
+#include <iostream>
 #include <fstream>
 #include <sstream>
 #include <string>
@@ -30,65 +30,42 @@ class Surface;
 //        }
 //};
 
-class Surface{
-    public:
-        Vec3 *v1,*v2,*v3;
-        Vec3 norm;
-    public:
-        Surface(){
-            norm = Vec3(0,0,0); //uninitialized normal
-        }
-
-        Surface(Vec3* vv1,Vec3* vv2,Vec3* vv3){
-
-            v1 = vv1; v2 = vv2; v3 = vv3;
-            //surface is made up from coordiates v1,v2 and v3
-            // N = (v2-v1) X (v3-v1)
-
-            norm = v2 - v1;
-            Vec3 temp = v3 - v1;
-
-            norm = norm.crossProduct(temp);
-        }
-
-};
-
-class Vertex{
-    Vec3 v; //the vertex
-    vector <Vec3> vn; //the vertex normal
+struct Vertex{
+    Vec3 v;
+    vector <Vec3> normals;
 };
 
 class Object3d{
     private:
         vector <Vertex> vertBuffer;   //List of Vertices
-        vector <Surface> surfaceBuffer; //list of Surfaces
+        vector <Vec2> textureBuffer; //List of textures
+        vector <Vec3> normBuffer;   //List of normals
+        vector <Vec3> surfaceBuffer; //list of Surfaces(vert,texture,norm)
+        bool texture;
+
     public:
-        Object3d(){}
-        void addVertex(Vec3& v);
-        void addSurface(Surface& s);
+        Object3d(){texture = false;}
+
+        void addVertex(Vec3& v){
+            vertBuffer.push_back(Vertex());
+            unsigned int index = vertBuffer.size()-1;
+            vertBuffer[index].v = v;
+        }
+        void addVertex(unsigned int index, Vec3 norm){
+            vertBuffer[index].normals.push_back(norm);
+            cout << index << ": " << norm.x << " " << norm.y << " "<<norm.z << endl;
+        }
+
+        void addSurface(Vec3& v){surfaceBuffer.push_back(v);}
+        void addNormal(Vec3& v){normBuffer.push_back(v);}
+        void addTexture(Vec2& v){textureBuffer.push_back(v);}
         void render();
         void drawWire();
         void SaveObject(string filename);
         void LoadObject(string filename);
 };
 
-void Object3d::addVertex(Vertex& v){
-    vertBuffer.push_back(v);
-}
 
-void Object3d::addSurface(Surface& e){
-    surfaceBuffer.push_back(e);
-}
-
-
-void Object3d::render(){
-
-    for(unsigned int i=0;i<surfaceBuffer.size();i++)
-    {
-
-
-    }
-}
 
 #endif // OBJECT_H_
 

@@ -2,7 +2,7 @@
 #define MATRIX_H_
 
 #include <math.h>
-#include <iostream>
+
 class Vec2
 {
     public: float x, y ;
@@ -57,139 +57,19 @@ class Matrix
         Matrix operator / (float val);      // C[] = C[] / val
         float dot(Matrix& mat);             // A.dot(B) == (A = A DOT B)
         float magnitude();                  //returns the square root of sum of squares of all element
-        void print()
-        {
-            for(int i=0;i<row;i++){
-                for(int j=0;j<col;j++){
-                    std::cout << data[col*i+j] << " ";
-                }
-                std::cout << std::endl;
-            }
-        }
-
 };
 
 
-float Matrix::magnitude()
-{
-    float res = 0;
-    int pos;
-    for (int i =0;i < this->row; i++)
-    {
-        for (int j=0;j<this->col;j++)
-        {
-            pos = (this->col)*i + j;
-            //pos gives the value of this(i,j)
 
-            res += data[pos] * data[pos];
+Vec2 World_To_Pixel(const Vec3& source ,          //World pofloat to convert floato pixel pofloat
+                        const Vec3& camera,       //Point from where you are watching
+                        const Vec3& LookTo,       //Where are we looking at from the camera pos
+                        float planeWidth,         //width of the perspective plane
+                        float planeHeight,        //height of the perspectice plane
+                        float winWidth,           //width of the screen window
+                        float winHeight);         //height of the screen window
 
-        }
-    }
-    return sqrt(res);
-}
 
-float Matrix::dot(Matrix& mat)
-{
-    if ((this->row != mat.row) || (this->col != mat.col))
-    throw "ERROR";
-    int pos;
-    float res = 0;
-    for (int i =0;i < this->row; i++)
-    {
-        for (int j=0;j<this->col;j++)
-        {
-            pos = (this->col)*i + j;
-            //pos gives the value of this(i,j)
-
-            res += data[pos] * mat(i,j);
-        }
-    }
-    return res;
-
-}
-
-Matrix Matrix::operator*(Matrix& mat)
-{
-    if (this->col != mat.row) throw "ERROR";
-    int pos;
-    Matrix res(row,mat.col);
-
-    for(int i = 0; i< this->row; i++ )
-    {
-        for (int j= 0; j< mat.col; j++)
-        {
-            res(i,j) = 0;
-            for(int k=0; k< this->col; k++)
-            {
-                pos = (this->col)*i + k ; // ith row kth column
-                res(i,j) += data[pos] * mat(k,j);
-            }
-        }
-    }
-    return res;
-}
-
-float& Matrix::operator() (int r, int c)
-{
-    int pos = col* r + c ;
-    return data[pos];
-}
-
-float& Matrix::operator() (int pos)
-{
-    return data[pos];
-}
-
-Matrix Matrix::operator+(Matrix& mat)
-{
-    if ((this->row != mat.row) || (this->col != mat.col))
-        throw "ERROR";
-    Matrix res(this->row,this->col);
-    int pos;
-    for (int i =0;i < this->row; i++)
-    {
-        for (int j=0;j<this->col;j++)
-        {
-            pos = (this->col)*i + j;
-            res(i,j) = data[pos] + mat(i,j);
-        }
-    }
-    return res;
-}
-
-Matrix Matrix::operator - (Matrix& mat)
-{
-    if ((this->row != mat.row) || (this->col != mat.col))
-        throw "ERROR";
-    Matrix res(this->row,this->col);
-    int pos;
-    for (int i =0;i < this->row; i++)
-    {
-        for (int j=0;j<this->col;j++)
-        {
-            pos = (this->col)*i + j;
-            res(i,j) = data[pos] - mat(i,j);
-        }
-    }
-    return res;
-}
-
-Matrix Matrix::operator / (float val)
-{
-    Matrix res(this->row,this->col);
-    int pos;
-
-    for (int i =0;i < this->row; i++)
-    {
-        for (int j=0;j<this->col;j++)
-        {
-            pos = (this->col)*i + j;
-            res(i,j) = data[pos] / val ;
-        }
-    }
-
-    return res;
-}
 
 //
 //int main()

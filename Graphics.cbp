@@ -34,6 +34,7 @@
 		<Unit filename="Graphics.cpp" />
 		<Unit filename="Graphics.h" />
 		<Unit filename="MatVec.h" />
+		<Unit filename="Object.cpp" />
 		<Unit filename="Object.h" />
 		<Unit filename="Pipelining.h" />
 		<Extensions>
