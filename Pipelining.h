@@ -13,15 +13,15 @@ Vec2 World_To_Pixel(const Vec3& source ,          //World pofloat to convert flo
                         float winHeight);         //height of the screen window
 
 
-Vec2 World_To_Pixel(const Vec3& source ,const Vec3& camera, const Vec3 LookTo,float planeWidth, float planeHeight, float winWidth, float winHeight){
+Vec2 World_To_Pixel(const Vec3& source ,const Vec3& camera, const Vec3& LookTo,float planeWidth, float planeHeight, float winWidth, float winHeight){
     //first determine the World to Camera transforming matrix
     Matrix WtoC(4,4);
     //for that use the concept of N, U and V unit vectors
     Vec3 N,U,V(0,1,0) ;
 
     //calculate the N unit vector
-
-    N = LookTo - camera;
+    //N is the vector from LookTo point to Camera point
+    N = camera-LookTo;
     N = N/ N.magnitude();
 
     //U = V X N
@@ -51,6 +51,7 @@ Vec2 World_To_Pixel(const Vec3& source ,const Vec3& camera, const Vec3 LookTo,fl
     R(2,0) = N[0] ; R(2,1) = N[1]; R(2,2) = N[2]; R(2,3) = 0;
     R(3,0) = 0 ; R(3,1) = 0; R(3,2) = 0; R(3,3) = 1;
 
+
     //Calculating the WtoC matrix W = T*R (rotate and then translate)
     WtoC = R*T;
 //
@@ -62,9 +63,11 @@ Vec2 World_To_Pixel(const Vec3& source ,const Vec3& camera, const Vec3 LookTo,fl
     S(0) = source.x ; S(1) = source.y; S(2) = source.z ; S(3) = 1;
 
     S = WtoC * S;
-    //S now represents the camera co-ordinate system's values
-    std::cout << S(0) << " " << S(1) << " "<<S(2) <<std::endl;
-    //calculate the screen pixels
+//    //S now represents the camera co-ordinate system's values
+//    std::cout << S(0) << " " << S(1) << " "<<S(2) <<std::endl;
+//    //calculate the screen pixels
+
+
     Vec2 retVal;
     retVal.x = S(0) / -S(2);
     retVal.y = S(1) / -S(2);

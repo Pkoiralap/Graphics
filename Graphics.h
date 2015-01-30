@@ -33,6 +33,10 @@ class Screen{
         void line(Vec2 P1,Vec2 P2,Color c);
         bool WaitQuit();
 
+        void refresh(){
+            SDL_Flip(screen);
+        }
+
         void clrscr(){
             SDL_Rect R;
             R.x =0; R.y =0;
@@ -53,7 +57,7 @@ void Screen::setpixel(Vec2 P,Color c)
     int x = P.x;
     int y = P.y;
 
-    assert (x>=0 && x <= width && y >=0 && y<=height) ;
+    assert (x>0 && x < width && y >0 && y<height) ;
 
     colour = SDL_MapRGB ( screen->format,c.r,c.g,c.b);
     y = y*screen->pitch/4;
@@ -65,6 +69,17 @@ void Screen::line(Vec2 P1, Vec2 P2,Color c){
 
     int x1 = P1.x; int y1 = P1.y;
     int x2 = P2.x; int y2 = P2.y;
+
+    if (x1 <= 0) x1 = 1;
+    if (x1 >= screen->w) x1 = screen->w -1;
+    if (y1 <= 0) y1 = 1;
+    if (y1 >= screen->h) y1 = screen->h -1;
+
+    if (x2 <= 0) x2 = 1;
+    if (x2 >= screen->w) x2 = screen->w -1 ;
+    if (y2 <= 0) y2 = 1;
+    if (y2 >= screen->h) y2 = screen->h -1;
+
 
     int delta_x(x2 - x1);
     // if x1 == x2, then it does not matter what we set here

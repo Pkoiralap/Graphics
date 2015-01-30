@@ -12,7 +12,7 @@ class Vec2
 
 class Vec3
 {
-    public: float x, y,z ;
+    public: float x,y,z;
     public: Vec3(){}
             Vec3(float xx, float yy, float zz): x(xx) ,y(yy), z(zz) {}
             Vec3 operator + (const Vec3& vec) const {return Vec3(x+vec.x,y+vec.y,z+vec.z); }
