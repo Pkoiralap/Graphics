@@ -39,10 +39,21 @@ class Screen{
         }
 
         void clrscr(){
-            SDL_Rect R;
-            R.x =0; R.y =0;
-            R.h = screen->h; R.w = screen->w;
-            SDL_FillRect(screen,&R,0);
+            SDL_FreeSurface(screen);
+            SDL_Rect rect;
+
+            rect.x = 0; rect.y = 0;
+            rect.h = screen->h; rect.w = screen->w;
+            SDL_FillRect(screen,&rect,0);
+            //screen = SDL_SetVideoMode(screen->w,screen->h,32,SDL_SWSURFACE);
+        }
+
+        ~Screen(){
+            if (screen) {
+                SDL_FreeSurface(screen);
+                screen = NULL;
+            }
+            SDL_Quit();
         }
 };
 

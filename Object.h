@@ -53,14 +53,13 @@ class Object3d{
         }
         void addVertex(unsigned int index, Vec3 norm){
             vertBuffer[index].normals.push_back(norm);
-            cout << index << ": " << norm.x << " " << norm.y << " "<<norm.z << endl;
         }
 
         void addSurface(Vec3& v){surfaceBuffer.push_back(v);}
         void addNormal(Vec3& v){normBuffer.push_back(v);}
         void addTexture(Vec2& v){textureBuffer.push_back(v);}
         void render();
-        void drawWire(Vec3& camera,Vec3& LookTo);
+        void drawWire(Screen* S,Vec3& camera,Vec3& LookTo);
         void SaveObject(string filename);
         void LoadObject(string filename);
 };

@@ -51,14 +51,16 @@ int main(){
     Vec3 camera(25,25,25);
     Vec3 LookTo(0,0,0);
     Object3d obj;
-    obj.LoadObject("teapot.obj");
+    obj.LoadObject("gourd.obj");
 
 //
     SDL_Event event;
+    Screen S(840,680);
 
     while (1)
     {
-        obj.drawWire(camera,LookTo);
+
+        obj.drawWire(&S,camera,LookTo);
         while(SDL_PollEvent(&event))
         {
             switch(event.type)
@@ -91,7 +93,7 @@ int main(){
             }
         }
     }
-    outside: SDL_Quit();
+    outside: S.~Screen();
     return 0;
 
 }

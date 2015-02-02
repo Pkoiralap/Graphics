@@ -12,6 +12,9 @@ void replaceAll(std::string& str, const std::string& from, const std::string& to
 
 void Object3d::LoadObject(string filename){
     vertBuffer.clear();
+    surfaceBuffer.clear();
+    normBuffer.clear();
+    textureBuffer.clear();
 
     ifstream obj(filename.c_str());
     if (!obj.is_open()) throw "Can not open";
@@ -26,7 +29,6 @@ void Object3d::LoadObject(string filename){
 
         istringstream linestream(line);
         linestream >> keyword;
-        cout << keyword;
         if (keyword == "v"){
             Vec3 temp;
             unsigned int t;
@@ -62,22 +64,23 @@ void Object3d::LoadObject(string filename){
             line = line.substr(1,line.length()-1); //remove the preceding f
             while(line.compare(0,1," ")==0)
                 line.erase(line.begin()); // remove leading whitespaces
-            replaceAll(line,"//","/0/"); //replace // with /0/ for texture to be 0
-            replaceAll(line,"/"," "); //remove the / for easy calculatoin
 
+//            replaceAll(line," ","//"); //replace // with /0/ for texture to be 0
+//            replaceAll(line,"//","/0/0/"); //replace // with /0/ for texture to be 0
+//            replaceAll(line,"/"," "); //remove the / for easy calculatoin
             istringstream lstream(line);
             //v contains .x = vertex index, .y = texture .z= normal index
 
             Vec3 v[3];
             lstream >> v[0].x;
-            lstream >> v[0].y;
-            lstream >> v[0].z;
+//            lstream >> v[0].y;
+//            lstream >> v[0].z;
             lstream >> v[1].x;
-            lstream >> v[1].y;
-            lstream >> v[1].z;
+//            lstream >> v[1].y;
+//            lstream >> v[1].z;
             lstream >> v[2].x;
-            lstream >> v[2].y;
-            lstream >> v[2].z;
+//            lstream >> v[2].y;
+//            lstream >> v[2].z;
 
             addSurface(v[0]);
             addSurface(v[1]);
@@ -88,22 +91,30 @@ void Object3d::LoadObject(string filename){
     //count of vertices and surfaces
     unsigned int n_vertices = vertBuffer.size();
     unsigned int n_surfaces = surfaceBuffer.size();
-
+    //for no vertex normal
+    Vec3 t(0,0,0);
     for(unsigned int i=0;i<n_surfaces;i++){
-        addVertex(surfaceBuffer[i].x-1,normBuffer[surfaceBuffer[i].z]);
+//        addVertex(surfaceBuffer[i].x-1,normBuffer[surfaceBuffer[i].z]);
+          addVertex(surfaceBuffer[i].x-1,t);
+
     }
 }
 
 
-void Object3d::drawWire(Vec3& camera,Vec3& LookTo){
-    Screen S(1024,840);
+void Object3d::drawWire(Screen* S,Vec3& camera,Vec3& LookTo){
+
+
     Color C(255,255,255);
+    S->clrscr();
     unsigned int len = vertBuffer.size();
     Vec2 v[len];
+
+
     for (unsigned int i=0;i<len;i++)
     {
         v[i] = World_To_Pixel(vertBuffer[i].v,camera,LookTo,.15,.15,1024,840);
     }
+
     len = surfaceBuffer.size();
     unsigned int t1;
     unsigned int t2;
@@ -111,17 +122,17 @@ void Object3d::drawWire(Vec3& camera,Vec3& LookTo){
     {
         t1 =surfaceBuffer[i].x-1;
         t2 =surfaceBuffer[i+1].x-1;
-        S.line(v[t1],v[t2],C);
+        S->line(v[t1],v[t2],C);
 
         t1 =surfaceBuffer[i+1].x-1;
         t2 =surfaceBuffer[i+2].x-1;
-        S.line(v[t1],v[t2],C);
+        S->line(v[t1],v[t2],C);
 
         t1 =surfaceBuffer[i+2].x-1;
         t2 =surfaceBuffer[i].x-1;
-        S.line(v[t1],v[t2],C);
+        S->line(v[t1],v[t2],C);
     }
 
-    S.refresh();
+    S->refresh();
 }
 
