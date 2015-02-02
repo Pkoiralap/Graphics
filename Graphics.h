@@ -19,21 +19,26 @@ class Color{
 
 class Screen{
     SDL_Surface* screen;
-
+    float* Zbuffer;
     public:
         Screen(int width = 640,int height=480){
             SDL_Init(SDL_INIT_EVERYTHING);
             screen = SDL_SetVideoMode(width,height,32,SDL_SWSURFACE);
+            Zbuffer = new float [width*height](); // () for setting everything to zero
         }
 
         void setpixel(Vec2 P,Color c);
-        void setpixel(int x,int y, Color c){
+        inline void setpixel(int x,int y,float dVal, Color c){
             Vec2 temp(x,y);
+            temp.z = dVal;
             setpixel(temp,c);
         }
         void line(Vec2 P1,Vec2 P2,Color c);
         bool WaitQuit();
-
+        void resetZ(){
+            delete[] Zbuffer;
+            Zbuffer = new float [(screen->w)*(screen->h)]();
+        }
         void refresh(){
             SDL_Flip(screen);
         }
@@ -54,6 +59,7 @@ class Screen{
                 screen = NULL;
             }
             SDL_Quit();
+            delete[] Zbuffer;
         }
 };
 

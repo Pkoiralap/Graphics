@@ -51,15 +51,12 @@ int main(){
     Vec3 camera(25,25,25);
     Vec3 LookTo(0,0,0);
     Object3d obj;
-    obj.LoadObject("gourd.obj");
+    obj.LoadObject("teapot.obj");
 
-//
     SDL_Event event;
-    Screen S(840,680);
-
+    Screen S(1024,840);
     while (1)
     {
-
         obj.drawWire(&S,camera,LookTo);
         while(SDL_PollEvent(&event))
         {
@@ -87,15 +84,11 @@ int main(){
                         camera.z -= 1;
                         break;
                     case SDLK_ESCAPE:
-                        goto outside;
-                        break;
+                        return 0;
                 }
             }
         }
     }
-    outside: S.~Screen();
-    return 0;
-
 }
 
 void Screen::setpixel(Vec2 P,Color c)
@@ -109,29 +102,41 @@ void Screen::setpixel(Vec2 P,Color c)
     //Check for boundaries
     int x = P.x;
     int y = P.y;
+    if (!(x>=0 && x <= width && y >=0 && y<=height)) return;
+    //assert (x>0 && x < width && y >0 && y<height) ;
 
-    assert (x>0 && x < width && y >0 && y<height) ;
+    //Zbuffer[row*col] == Zbuffer[width*height]
+    //Zbuffer[x][y] = Zbuffer[x*col+y]
+    //If the present z value is greater than the previous on, do not draw i
+    if (P.z > Zbuffer[height*x + y])
+        return;
+    else
+        Zbuffer[height*x + y] = P.z;
 
     colour = SDL_MapRGB ( screen->format,c.r,c.g,c.b);
-    y = y*screen->pitch/4;
-    pixmem32 = (int*) screen->pixels+y+x;
+    pixmem32 = (int*) screen->pixels+y*screen->pitch/4+x;
     *pixmem32 = colour;
 }
 
+
+//Draw line considering the depth of the points.
 void Screen::line(Vec2 P1, Vec2 P2,Color c){
 
     int x1 = P1.x; int y1 = P1.y;
     int x2 = P2.x; int y2 = P2.y;
+    float dStart = P1.z, dEnd = P2.z;// Starting depth value, and ending depth values
+    float dVal = dStart, delta_d = dStart - dEnd; // The depth value of that point, and the difference delta_d
 
-    if (x1 <= 0) x1 = 1;
-    if (x1 >= screen->w) x1 = screen->w -1;
-    if (y1 <= 0) y1 = 1;
-    if (y1 >= screen->h) y1 = screen->h -1;
-
-    if (x2 <= 0) x2 = 1;
-    if (x2 >= screen->w) x2 = screen->w -1 ;
-    if (y2 <= 0) y2 = 1;
-    if (y2 >= screen->h) y2 = screen->h -1;
+//
+//    if (x1 <= 0) x1 = 1;
+//    if (x1 >= screen->w) x1 = screen->w -1;
+//    if (y1 <= 0) y1 = 1;
+//    if (y1 >= screen->h) y1 = screen->h -1;
+//
+//    if (x2 <= 0) x2 = 1;
+//    if (x2 >= screen->w) x2 = screen->w -1 ;
+//    if (y2 <= 0) y2 = 1;
+//    if (y2 >= screen->h) y2 = screen->h -1;
 
 
     int delta_x(x2 - x1);
@@ -144,13 +149,13 @@ void Screen::line(Vec2 P1, Vec2 P2,Color c){
     signed char const iy((delta_y > 0) - (delta_y < 0));
     delta_y = ABS(delta_y) << 1;
 
-    setpixel(x1, y1,c);
+    setpixel(x1,y1,dVal,c);
 
     if (delta_x >= delta_y)
     {
         // error may go below zero
         int error(delta_y - (delta_x >> 1));
-
+        float id = delta_d / (float) delta_x;
         while (x1 != x2)
         {
             if ((error >= 0) && (error || (ix > 0)))
@@ -162,15 +167,15 @@ void Screen::line(Vec2 P1, Vec2 P2,Color c){
 
             error += delta_y;
             x1 += ix;
-
-            setpixel(x1, y1,c);
+            dVal += id;
+            setpixel(x1, y1 ,dVal, c);
         }
     }
     else
     {
         // error may go below zero
         int error(delta_x - (delta_y >> 1));
-
+        float id = delta_d / (float) delta_y;
         while (y1 != y2)
         {
             if ((error >= 0) && (error || (iy > 0)))
@@ -182,8 +187,8 @@ void Screen::line(Vec2 P1, Vec2 P2,Color c){
 
             error += delta_x;
             y1 += iy;
-
-            setpixel(x1, y1,c);
+            dVal += id;
+            setpixel(x1, y1,dVal, c);
         }
     }
 }

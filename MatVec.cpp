@@ -70,6 +70,8 @@ Vec2 World_To_Pixel(const Vec3& source ,const Vec3& camera, const Vec3& LookTo,f
     retVal.x = (int)(retVal.x * winWidth);
     retVal.y = (int)((1-retVal.y) * winHeight);
 
+    retVal.z = S(2);
+
     return retVal;
 }
 

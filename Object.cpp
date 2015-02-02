@@ -26,7 +26,7 @@ void Object3d::LoadObject(string filename){
             line.erase(line.begin()); // remove leading whitespaces
         while(line.size()>0 && line.compare(line.size()-1,1," ")==0)
             line.erase(line.end()-1); // remove trailing whitespaces
-
+        if (line == "" || line == "\n") continue;
         istringstream linestream(line);
         linestream >> keyword;
         if (keyword == "v"){
@@ -64,10 +64,13 @@ void Object3d::LoadObject(string filename){
             line = line.substr(1,line.length()-1); //remove the preceding f
             while(line.compare(0,1," ")==0)
                 line.erase(line.begin()); // remove leading whitespaces
+            while(line.size()>0 && line.compare(line.size()-1,1," ")==0)
+            line.erase(line.end()-1); // remove trailing whitespaces
+
 
 //            replaceAll(line," ","//"); //replace // with /0/ for texture to be 0
 //            replaceAll(line,"//","/0/0/"); //replace // with /0/ for texture to be 0
-//            replaceAll(line,"/"," "); //remove the / for easy calculatoin
+         //   replaceAll(line,"/"," "); //remove the / for easy calculatoin
             istringstream lstream(line);
             //v contains .x = vertex index, .y = texture .z= normal index
 
@@ -76,10 +79,10 @@ void Object3d::LoadObject(string filename){
 //            lstream >> v[0].y;
 //            lstream >> v[0].z;
             lstream >> v[1].x;
-//            lstream >> v[1].y;
+           // lstream >> v[1].y;
 //            lstream >> v[1].z;
             lstream >> v[2].x;
-//            lstream >> v[2].y;
+            //lstream >> v[2].y;
 //            lstream >> v[2].z;
 
             addSurface(v[0]);
@@ -91,6 +94,7 @@ void Object3d::LoadObject(string filename){
     //count of vertices and surfaces
     unsigned int n_vertices = vertBuffer.size();
     unsigned int n_surfaces = surfaceBuffer.size();
+
     //for no vertex normal
     Vec3 t(0,0,0);
     for(unsigned int i=0;i<n_surfaces;i++){
@@ -106,6 +110,7 @@ void Object3d::drawWire(Screen* S,Vec3& camera,Vec3& LookTo){
 
     Color C(255,255,255);
     S->clrscr();
+    S->resetZ();
     unsigned int len = vertBuffer.size();
     Vec2 v[len];
 
@@ -113,6 +118,7 @@ void Object3d::drawWire(Screen* S,Vec3& camera,Vec3& LookTo){
     for (unsigned int i=0;i<len;i++)
     {
         v[i] = World_To_Pixel(vertBuffer[i].v,camera,LookTo,.15,.15,1024,840);
+//        cout << v[i].z << endl;
     }
 
     len = surfaceBuffer.size();
@@ -136,3 +142,8 @@ void Object3d::drawWire(Screen* S,Vec3& camera,Vec3& LookTo){
     S->refresh();
 }
 
+
+void Object3d::render(){
+
+
+}

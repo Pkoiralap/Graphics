@@ -5,13 +5,14 @@
 
 class Vec2
 {
-    public: float x, y ;
+    public: float x, y,z ; //z for depth
     public: Vec2(){}
             Vec2(float xx, float yy): x(xx) ,y(yy) {}
-            Vec2(const Vec2& in):x(in.x),y(in.y){}
+            Vec2(const Vec2& in):x(in.x),y(in.y),z(in.z){}
             void operator = (const Vec2& in){
                 x = in.x;
                 y = in.y;
+                z = in.z;
             }
 };
 
