@@ -7,7 +7,7 @@ Vec2 World_To_Pixel(const Vec3& source ,const Vec3& camera, const Vec3& LookTo,f
     //first determine the World to Camera transforming matrix
     Matrix WtoC(4,4);
     //for that use the concept of N, U and V unit vectors
-    Vec3 N,U,V(0,1,0) ;
+    Vec3 N,U,V(0,1,0);
 
     //calculate the N unit vector
     //N is the vector from LookTo point to Camera point
@@ -138,7 +138,18 @@ float& Matrix::operator() (int r, int c)
     return data[pos];
 }
 
+const float Matrix::operator() (int r, int c) const
+{
+    int pos = col* r + c ;
+    return data[pos];
+}
+
 float& Matrix::operator() (int pos)
+{
+    return data[pos];
+}
+
+const float Matrix::operator() (int pos) const
 {
     return data[pos];
 }

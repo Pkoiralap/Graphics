@@ -8,6 +8,11 @@ class Vec2
     public: float x, y ;
     public: Vec2(){}
             Vec2(float xx, float yy): x(xx) ,y(yy) {}
+            Vec2(const Vec2& in):x(in.x),y(in.y){}
+            void operator = (const Vec2& in){
+                x = in.x;
+                y = in.y;
+            }
 };
 
 class Vec3
@@ -46,17 +51,42 @@ class Matrix
             row = mat.row;
             col = mat.col;
             data = new float[row*col];
-            data = mat.data;
+
+            for (int i =0;i<row*col;i++)
+                (*this)(i) = mat(i);
         }
+
+
+        void operator=(const Matrix& mat)
+        {
+            delete[] data;
+            row = mat.row;
+            col = mat.col;
+            data = new float[row*col];
+
+            for (int i =0;i<row*col;i++)
+                (*this)(i) = mat(i);
+        }
+
 
         float& operator() (int r, int c);   //mat(i,j)
         float& operator() (int pos) ;       //mat(pos)
+
+
+        const float operator() (int r, int c) const;   //mat(i,j)
+        const float operator() (int pos) const;       //mat(pos)
+
+
         Matrix operator * (Matrix& mat);    // M = T * M
         Matrix operator + (Matrix& mat);    // C = A + B
         Matrix operator - (Matrix& mat);    // C = A - B
         Matrix operator / (float val);      // C[] = C[] / val
         float dot(Matrix& mat);             // A.dot(B) == (A = A DOT B)
         float magnitude();                  //returns the square root of sum of squares of all element
+
+        ~Matrix(){
+            delete[] data;
+        }
 };
 
 
