@@ -75,14 +75,16 @@ void Screen::setpixel(Vec2 P,Vec3 c)
 
 
 //Draw line considering the depth of the points.
-void Screen::line(Vec2 P1, Vec2 P2,Vec3 c){
+void Screen::line(Vec2 P1, Vec2 P2,Vec3 c1 , Vec3 c2 ){
 
     int x1 = P1.x; int y1 = P1.y;
     int x2 = P2.x; int y2 = P2.y;
+
     float dStart = P1.z, dEnd = P2.z;// Starting depth value, and ending depth values
     float dVal = dStart, delta_d = dStart - dEnd; // The depth value of that point, and the difference delta_d
 
-//
+    Vec3 cVal = c2 , delta_c = c2-c1;
+
 //    if (x1 <= 0) x1 = 1;
 //    if (x1 >= screen->w) x1 = screen->w -1;
 //    if (y1 <= 0) y1 = 1;
@@ -104,13 +106,14 @@ void Screen::line(Vec2 P1, Vec2 P2,Vec3 c){
     signed char const iy((delta_y > 0) - (delta_y < 0));
     delta_y = ABS(delta_y) << 1;
 
-    setpixel(x1,y1,dVal,c);
+    setpixel(x1,y1,dVal,cVal);
 
     if (delta_x >= delta_y)
     {
         // error may go below zero
         int error(delta_y - (delta_x >> 1));
         float id = delta_d / (float) delta_x;
+        Vec3 ic = delta_c / (float) delta_x;
         while (x1 != x2)
         {
             if ((error >= 0) && (error || (ix > 0)))
@@ -123,7 +126,8 @@ void Screen::line(Vec2 P1, Vec2 P2,Vec3 c){
             error += delta_y;
             x1 += ix;
             dVal += id;
-            setpixel(x1, y1 ,dVal, c);
+            cVal = cVal+ic;
+            setpixel(x1, y1 ,dVal, cVal);
         }
     }
     else
@@ -131,6 +135,7 @@ void Screen::line(Vec2 P1, Vec2 P2,Vec3 c){
         // error may go below zero
         int error(delta_x - (delta_y >> 1));
         float id = delta_d / (float) delta_y;
+        Vec3 ic = delta_c / (float) delta_y;
         while (y1 != y2)
         {
             if ((error >= 0) && (error || (iy > 0)))
@@ -143,7 +148,8 @@ void Screen::line(Vec2 P1, Vec2 P2,Vec3 c){
             error += delta_x;
             y1 += iy;
             dVal += id;
-            setpixel(x1, y1,dVal, c);
+            cVal = cVal+ic;
+            setpixel(x1, y1,dVal, cVal);
         }
     }
 }

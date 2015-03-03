@@ -165,15 +165,15 @@ void Object3d::drawWire(Screen* S,Vec3& camera,Vec3& LookTo){
     {
         t1 =surfaceBuffer[i].x-1;
         t2 =surfaceBuffer[i+1].x-1;
-        S->line(vert2d[t1],vert2d[t2],C);
+        S->line(vert2d[t1],vert2d[t2]);
 
         t1 =surfaceBuffer[i+1].x-1;
         t2 =surfaceBuffer[i+2].x-1;
-        S->line(vert2d[t1],vert2d[t2],C);
+        S->line(vert2d[t1],vert2d[t2]);
 
         t1 =surfaceBuffer[i+2].x-1;
         t2 =surfaceBuffer[i].x-1;
-        S->line(vert2d[t1],vert2d[t2],C);
+        S->line(vert2d[t1],vert2d[t2]);
     }
 
     S->refresh();
@@ -298,7 +298,7 @@ void Object3d::drawSpan(Screen* S,Vec3& camera,Vec3& LookTo,Edge& E1, Edge& E2){
 //            factor += stepfactor;
 //        }
 
-        S->line(Vec2(x1,(float)y,z1),Vec2(x2,(float)y,z2),c);
+        S->line(Vec2(x1,(float)y,z1),Vec2(x2,(float)y,z2),Vec3(0,255,0),Vec3(255,0,0));
         // increase factors
         factor1 += step1;
         factor2 += step2;

@@ -26,7 +26,11 @@ class Screen{
             temp.z = dVal;
             setpixel(temp,c);
         }
-        void line(Vec2 P1,Vec2 P2,Vec3 c);
+//        void line(Vec2 P1,Vec2 P2){
+//            line(P1,P2,Vec3(255,255,255),Vec3(255,255,255));
+//        }
+//
+        void line(Vec2 P1,Vec2 P2,Vec3 c1 = Vec3(255,255,255), Vec3 c2 = Vec3(255,255,255));
         bool WaitQuit();
         void resetZ(){
             delete[] Zbuffer;
