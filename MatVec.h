@@ -22,17 +22,19 @@ class Vec3
 class Vec2
 {
     public: float x, y,z ; //z for depth
-            float i; //color intensity
             Vec3 c; //c for color
 
 
     public: Vec2(){}
-            Vec2(float xx, float yy,float zz=0): x(xx) ,y(yy),z(zz) {}
+            Vec2(float xx, float yy,float zz=0,Vec3 col = Vec3(255,255,255)): x(xx) ,y(yy),z(zz){
+                c = col;
+            }
             Vec2(const Vec2& in):x(in.x),y(in.y),z(in.z){}
             void operator = (const Vec2& in){
                 x = in.x;
                 y = in.y;
                 z = in.z;
+                c = in.c;
             }
 };
 

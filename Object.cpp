@@ -18,7 +18,7 @@ void Object3d::calculateNorm(){
         V3 = vertBuffer[t3].v;
 
         //determine the normal of the traingle and assign
-        norm = (V2-V1).crossProduct(V2-V1);
+        norm = (V2-V1).crossProduct(V3-V1);
         vertBuffer[t1].norm = vertBuffer[t2].norm = vertBuffer[t3].norm = norm;
 
         //increase the surface shared count by 1 for each assignation
@@ -183,7 +183,7 @@ void Object3d::render(Screen* S,Vec3& camera,Vec3& LookTo){
     S->clrscr();
     S->resetZ();
     calculateNorm();
-    Vec3 point(20,20,20);
+    Vec3 point(0,0,10);
     fillObject(S,camera,LookTo,point);
     S->refresh();
 }
@@ -191,10 +191,16 @@ void Object3d::render(Screen* S,Vec3& camera,Vec3& LookTo){
 void Object3d::fillObject(Screen* S,Vec3& camera,Vec3& LookTo,Vec3& Lpos){
     unsigned int len = vertBuffer.size();
     Vec2 vert2d[len];
+    float intensity;
+    Vec3 temp;
     for (unsigned int i=0;i<len;i++)
     {
         vert2d[i] = World_To_Pixel(vertBuffer[i].v,camera,LookTo,.3,.3,1024,840);
         //assign intensity here for shading
+        temp = Lpos - vertBuffer[i].v ;
+        temp = temp / temp.magnitude();
+        intensity = temp.dotProduct(vertBuffer[i].norm);
+        vert2d[i].c = Vec3(255,255,255) * intensity ;
 
 //        cout << v[i].z << endl;
     }
@@ -259,6 +265,8 @@ void Object3d::drawSpan(Screen* S,Vec3& camera,Vec3& LookTo,Edge& E1, Edge& E2){
     float e2zdiff = (float)ABS(E2.v2->z - E2.v1->z);
 
     //put the intensity difference and color difference here for interpolation
+    Vec3 e1cdiff = (E1.v2->c - E1.v1->c);
+    Vec3 e2cdiff = (E2.v2->c - E2.v1->c);
 
     //
 
@@ -273,7 +281,7 @@ void Object3d::drawSpan(Screen* S,Vec3& camera,Vec3& LookTo,Edge& E1, Edge& E2){
     float factor,stepfactor;
 
     float zdiff,z1,z2;
-    Vec3 c(255,255,255);
+    Vec3 c1,c2;
     // loop through the lines between the edges and draw spans
     for(int y = E2.yMin; y < E2.yMax; y++) {
         // create and draw span
@@ -282,6 +290,10 @@ void Object3d::drawSpan(Screen* S,Vec3& camera,Vec3& LookTo,Edge& E1, Edge& E2){
 
         z1= E1.v1->z + (int)(e1zdiff * factor1);
         z2= E2.v1->z + (int)(e2zdiff * factor2);
+
+        c1 = E1.v1->c + e1cdiff*factor1;
+        c2 = E2.v1->c + e2cdiff*factor2;
+
 
 //        //make sure x1 is always smaller
 //        if (x1>x2) swap(x1,x2);
@@ -298,7 +310,7 @@ void Object3d::drawSpan(Screen* S,Vec3& camera,Vec3& LookTo,Edge& E1, Edge& E2){
 //            factor += stepfactor;
 //        }
 
-        S->line(Vec2(x1,(float)y,z1),Vec2(x2,(float)y,z2),Vec3(0,255,0),Vec3(255,0,0));
+        S->line(Vec2(x1,(float)y,z1),Vec2(x2,(float)y,z2),c1,c2);
         // increase factors
         factor1 += step1;
         factor2 += step2;
