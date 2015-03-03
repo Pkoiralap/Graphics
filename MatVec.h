@@ -3,19 +3,6 @@
 
 #include <math.h>
 
-class Vec2
-{
-    public: float x, y,z ; //z for depth
-    public: Vec2(){}
-            Vec2(float xx, float yy): x(xx) ,y(yy) {}
-            Vec2(const Vec2& in):x(in.x),y(in.y),z(in.z){}
-            void operator = (const Vec2& in){
-                x = in.x;
-                y = in.y;
-                z = in.z;
-            }
-};
-
 class Vec3
 {
     public: float x,y,z;
@@ -32,8 +19,22 @@ class Vec3
             float& operator [] (int i){return (&x)[i];}
 };
 
+class Vec2
+{
+    public: float x, y,z ; //z for depth
+            float i; //color intensity
+            Vec3 c; //c for color
 
 
+    public: Vec2(){}
+            Vec2(float xx, float yy,float zz=0): x(xx) ,y(yy),z(zz) {}
+            Vec2(const Vec2& in):x(in.x),y(in.y),z(in.z){}
+            void operator = (const Vec2& in){
+                x = in.x;
+                y = in.y;
+                z = in.z;
+            }
+};
 
 
 class Matrix
@@ -92,13 +93,6 @@ class Matrix
 
 
 
-Vec2 World_To_Pixel(const Vec3& source ,          //World pofloat to convert floato pixel pofloat
-                        const Vec3& camera,       //Point from where you are watching
-                        const Vec3& LookTo,       //Where are we looking at from the camera pos
-                        float planeWidth,         //width of the perspective plane
-                        float planeHeight,        //height of the perspectice plane
-                        float winWidth,           //width of the screen window
-                        float winHeight);         //height of the screen window
 
 
 

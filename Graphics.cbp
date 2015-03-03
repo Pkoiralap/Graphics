@@ -39,6 +39,7 @@
 		<Unit filename="Object.h" />
 		<Unit filename="Transformation.cpp" />
 		<Unit filename="Transformation.h" />
+		<Unit filename="main.cpp" />
 		<Extensions>
 			<code_completion />
 			<debugger />

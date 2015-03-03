@@ -46,52 +46,7 @@
 //
 //}
 
-
-int main(){
-    Vec3 camera(25,25,25);
-    Vec3 LookTo(0,0,0);
-    Object3d obj;
-    obj.LoadObject("teapot.obj");
-
-    SDL_Event event;
-    Screen S(1024,840);
-    while (1)
-    {
-        obj.drawWire(&S,camera,LookTo);
-        while(SDL_PollEvent(&event))
-        {
-            switch(event.type)
-            {
-                case SDL_KEYDOWN:
-                switch (event.key.keysym.sym){
-                    case SDLK_a:
-                        camera.x -= 1;
-                        break;
-                    //Triggered for keydown
-                    case SDLK_s:
-                        camera.y -= 1;
-                        break;
-                    case SDLK_d:
-                        camera.x += 1;
-                        break;
-                    case SDLK_w:
-                        camera.y += 1;
-                        break;
-                    case SDLK_z:
-                        camera.z += 1;
-                        break;
-                    case SDLK_x:
-                        camera.z -= 1;
-                        break;
-                    case SDLK_ESCAPE:
-                        return 0;
-                }
-            }
-        }
-    }
-}
-
-void Screen::setpixel(Vec2 P,Color c)
+void Screen::setpixel(Vec2 P,Vec3 c)
 {
     int *pixmem32;
     int colour;
@@ -113,14 +68,14 @@ void Screen::setpixel(Vec2 P,Color c)
     else
         Zbuffer[height*x + y] = P.z;
 
-    colour = SDL_MapRGB ( screen->format,c.r,c.g,c.b);
+    colour = SDL_MapRGB ( screen->format,c.x,c.y,c.z);
     pixmem32 = (int*) screen->pixels+y*screen->pitch/4+x;
     *pixmem32 = colour;
 }
 
 
 //Draw line considering the depth of the points.
-void Screen::line(Vec2 P1, Vec2 P2,Color c){
+void Screen::line(Vec2 P1, Vec2 P2,Vec3 c){
 
     int x1 = P1.x; int y1 = P1.y;
     int x2 = P2.x; int y2 = P2.y;

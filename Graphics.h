@@ -3,19 +3,12 @@
 
 
 #include <SDL/SDL.h>
+#include "MatVec.h"
 #include <math.h>
 #include <cassert>
 #include "MatVec.h"
 #define round(a) ((int) (a+0.5))
 #define ABS(a) ((a<0)? a*-1 : a)
-
-class Color{
-    public:
-        int r,g,b,a;
-    public: Color(){}
-            Color(int rr, int gg, int bb, int aa=255):r(rr),g(gg),b(bb),a(aa){}
-
-};
 
 class Screen{
     SDL_Surface* screen;
@@ -27,13 +20,13 @@ class Screen{
             Zbuffer = new float [width*height](); // () for setting everything to zero
         }
 
-        void setpixel(Vec2 P,Color c);
-        inline void setpixel(int x,int y,float dVal, Color c){
+        void setpixel(Vec2 P,Vec3 c);
+        inline void setpixel(int x,int y,float dVal, Vec3 c){
             Vec2 temp(x,y);
             temp.z = dVal;
             setpixel(temp,c);
         }
-        void line(Vec2 P1,Vec2 P2,Color c);
+        void line(Vec2 P1,Vec2 P2,Vec3 c);
         bool WaitQuit();
         void resetZ(){
             delete[] Zbuffer;
