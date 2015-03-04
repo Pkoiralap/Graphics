@@ -97,8 +97,8 @@ class Object3d{
     //Object fillers
     public:
         void drawWire(Screen* S,Vec3& camera,Vec3& LookTo);
-        void fillObject(Screen* S,Vec3& camera,Vec3& LookTo,Vec3& Lpos);
-        void render(Screen* S,Vec3& camera,Vec3& LookTo,Vec3& Lpos);
+        void fillObject(Screen* S,Vec3& camera,Vec3& LookTo,vector<Vec3> Lpos);
+        void render(Screen* S,Vec3& camera,Vec3& LookTo,vector<Vec3> Lpos);
         void drawSpan(Screen* S,Vec3& camera,Vec3& LookTo,Edge& E1, Edge& E2);
 
     //calculators

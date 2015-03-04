@@ -5,7 +5,7 @@
 
 Vec3 camera(25,25,25);
 Vec3 LookTo(0,0,0);
-Vec3 Lpos(10,10,0);
+vector<Vec3> Lpos;
 
 int processInput(){
      Uint8* keystate = SDL_GetKeyState(NULL);
@@ -33,19 +33,25 @@ int processInput(){
 
     if(keystate[SDLK_LEFT]){
         RotateX(camera,2);
+        //RotateX(Lpos,2);
     }
 
     if(keystate[SDLK_RIGHT]){
         RotateY(camera,2);
+        //RotateY(Lpos,2);
+
     }
 
     if(keystate[SDLK_UP]){
         RotateZ(camera,2);
+        //RotateZ(Lpos,2);
     }
 
     if(keystate[SDLK_l]){
-        RotateY(Lpos,2);
+        for(unsigned int i=0;i<Lpos.size();i++)
+            RotateY(Lpos[i],2);
     }
+
 
     SDL_Event event;
     while(SDL_PollEvent(&event))
@@ -66,8 +72,13 @@ int processInput(){
 int main(){
     Object3d obj;
     obj.LoadObject("teapot.obj");
-
     Screen S(1024,840);
+    Lpos.push_back(Vec3(10,0,0));
+    Lpos.push_back(Vec3(0,10,0));
+    Lpos.push_back(Vec3(0,0,10));
+//    Lpos.push_back(Vec3(-10,0,0));
+//    Lpos.push_back(Vec3(0,0,-10));
+
     while (processInput() != -1){
         obj.render(&S,camera,LookTo,Lpos);
     }

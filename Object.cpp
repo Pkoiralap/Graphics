@@ -178,23 +178,25 @@ void Object3d::drawWire(Screen* S,Vec3& camera,Vec3& LookTo){
     S->refresh();
 }
 
-void Object3d::render(Screen* S,Vec3& camera,Vec3& LookTo,Vec3& Lpos){
+void Object3d::render(Screen* S,Vec3& camera,Vec3& LookTo,vector<Vec3> Lpos){
     S->clrscr();
     S->resetZ();
-
     fillObject(S,camera,LookTo,Lpos);
     S->refresh();
 }
 
-void Object3d::fillObject(Screen* S,Vec3& camera,Vec3& LookTo,Vec3& Lpos){
+void Object3d::fillObject(Screen* S,Vec3& camera,Vec3& LookTo,vector<Vec3> Lpos){
     unsigned int len = vertBuffer.size();
     Vec2 vert2d[len];
     float intensity;
+    Vec3 temp(0,0,0);
     for (unsigned int i=0;i<len;i++)
     {
         vert2d[i] = World_To_Pixel(vertBuffer[i].v,camera,LookTo,.4,.4,1024,840);
         //assign intensity here for shading
-        Vec3 temp = Lpos - vertBuffer[i].v ;
+        for(unsigned int j=0; j<Lpos.size();j++)
+            temp = temp + vertBuffer[i].v - Lpos[j] ;
+
         temp = temp / temp.magnitude();
         vert2d[i].i = temp.dotProduct(vertBuffer[i].norm);
 //        cout << v[i].z << endl;
@@ -297,7 +299,7 @@ void Object3d::drawSpan(Screen* S,Vec3& camera,Vec3& LookTo,Edge& E1, Edge& E2){
         i1 = E1.v1->i + e1idiff*factor1;
         i2 = E2.v1->i + e2idiff*factor2;
 
-        S->line(Vec2(x1,y,z1,i1),Vec2(x2,y,z2,i2),Vec3(255,100,100));
+        S->line(Vec2(x1,y,z1,i1),Vec2(x2,y,z2,i2),Vec3(255,255,0));
 
         // increase factors
         factor1 += step1;
