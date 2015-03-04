@@ -18,7 +18,7 @@ void Object3d::calculateNorm(){
         V3 = vertBuffer[t3].v;
 
         //determine the normal of the traingle and assign
-        norm = (V2-V1).crossProduct(V3-V1);
+        norm = (V3-V1).crossProduct(V2-V1);
         vertBuffer[t1].norm = vertBuffer[t2].norm = vertBuffer[t3].norm = norm;
 
         //increase the surface shared count by 1 for each assignation
@@ -79,21 +79,21 @@ void Object3d::LoadObject(string filename){
 
             addVertex(temp);
         }
-        else if (keyword == "vn"){
-            Vec3 v;
-            linestream >> v.x;
-            linestream >> v.y;
-            linestream >> v.z;
-            addNormal(v);
-        }
-
-        else if(keyword == "vt"){
-            texture = true;
-            Vec2 v;
-            linestream >> v.x;
-            linestream >> v.y;
-            addTexture(v);
-        }
+//        else if (keyword == "vn"){
+//            Vec3 v;
+//            linestream >> v.x;
+//            linestream >> v.y;
+//            linestream >> v.z;
+//            addNormal(v);
+//        }
+//
+//        else if(keyword == "vt"){
+//            texture = true;
+//            Vec2 v;
+//            linestream >> v.x;
+//            linestream >> v.y;
+//            addTexture(v);
+//        }
 
         else if(keyword == "f"){
             line = line.substr(1,line.length()-1); //remove the preceding f
@@ -102,10 +102,10 @@ void Object3d::LoadObject(string filename){
             while(line.size()>0 && line.compare(line.size()-1,1," ")==0)
             line.erase(line.end()-1); // remove trailing whitespaces
 
-
+//
 //            replaceAll(line," ","//"); //replace // with /0/ for texture to be 0
 //            replaceAll(line,"//","/0/0/"); //replace // with /0/ for texture to be 0
-         //   replaceAll(line,"/"," "); //remove the / for easy calculatoin
+//            replaceAll(line,"/"," "); //remove the / for easy calculatoin
             istringstream lstream(line);
             //v contains .x = vertex index, .y = texture .z= normal index
 
@@ -139,9 +139,8 @@ void Object3d::LoadObject(string filename){
 //
 //    }
 
+    calculateNorm();
 }
-
-
 
 
 void Object3d::drawWire(Screen* S,Vec3& camera,Vec3& LookTo){
@@ -179,12 +178,11 @@ void Object3d::drawWire(Screen* S,Vec3& camera,Vec3& LookTo){
     S->refresh();
 }
 
-void Object3d::render(Screen* S,Vec3& camera,Vec3& LookTo){
+void Object3d::render(Screen* S,Vec3& camera,Vec3& LookTo,Vec3& Lpos){
     S->clrscr();
     S->resetZ();
-    calculateNorm();
-    Vec3 point(0,0,10);
-    fillObject(S,camera,LookTo,point);
+
+    fillObject(S,camera,LookTo,Lpos);
     S->refresh();
 }
 
@@ -192,16 +190,13 @@ void Object3d::fillObject(Screen* S,Vec3& camera,Vec3& LookTo,Vec3& Lpos){
     unsigned int len = vertBuffer.size();
     Vec2 vert2d[len];
     float intensity;
-    Vec3 temp;
     for (unsigned int i=0;i<len;i++)
     {
-        vert2d[i] = World_To_Pixel(vertBuffer[i].v,camera,LookTo,.3,.3,1024,840);
+        vert2d[i] = World_To_Pixel(vertBuffer[i].v,camera,LookTo,.4,.4,1024,840);
         //assign intensity here for shading
-        temp = Lpos - vertBuffer[i].v ;
+        Vec3 temp = Lpos - vertBuffer[i].v ;
         temp = temp / temp.magnitude();
-        intensity = temp.dotProduct(vertBuffer[i].norm);
-        vert2d[i].c = Vec3(255,255,255) * intensity ;
-
+        vert2d[i].i = temp.dotProduct(vertBuffer[i].norm);
 //        cout << v[i].z << endl;
     }
 
@@ -220,7 +215,15 @@ void Object3d::fillObject(Screen* S,Vec3& camera,Vec3& LookTo,Vec3& Lpos){
         t3 =surfaceBuffer[i+2].x-1;
 
         //vertexes
-        v[0] = vert2d[t1]; v[1] = vert2d[t2]; v[2] = vert2d[t3];
+        v[0] = vert2d[t1];
+        v[1] = vert2d[t2];
+        v[2] = vert2d[t3];
+
+//        vertexes
+//        v[0] = Vec2(50,50,-12,.5);
+//        v[1] = Vec2(100,100,-14,.6);
+//        v[2] = Vec2(50,150,-10,.9);
+
 
         //Edges
         E[0] = Edge(v,v+1);
@@ -231,7 +234,7 @@ void Object3d::fillObject(Screen* S,Vec3& camera,Vec3& LookTo,Vec3& Lpos){
         float maxLen =0;
         int longIndex =0;
         for (int i=0;i<3;i++){
-            float Len = E[i].yMax - E[i].yMin;
+            float Len = E[i].v2->y - E[i].v1->y;
             if (Len>maxLen){
                 maxLen = Len;
                 longIndex = i;
@@ -253,24 +256,24 @@ void Object3d::fillObject(Screen* S,Vec3& camera,Vec3& LookTo,Vec3& Lpos){
 void Object3d::drawSpan(Screen* S,Vec3& camera,Vec3& LookTo,Edge& E1, Edge& E2){
 
     //calculate the y difference for interpolation
-    float e1ydiff = (float)(E1.yMax - E1.yMin); if (e1ydiff == 0) return;
-    float e2ydiff = (float)(E2.yMax - E2.yMin); if (e2ydiff == 0) return;
+    float e1ydiff = (float)(E1.v2->y - E1.v1->y); if (e1ydiff == 0) return;
+    float e2ydiff = (float)(E2.v2->y - E2.v1->y); if (e2ydiff == 0) return;
 
     //calculate the x difference for span processing
-    float e1xdiff = (float)(E1.xMax - E1.xMin);
-    float e2xdiff = (float)(E2.xMax - E2.xMin);
+    float e1xdiff = (float)(E1.v2->x - E1.v1->x);
+    float e2xdiff = (float)(E2.v2->x - E2.v1->x);
 
     //calculate the z difference
-    float e1zdiff = (float)ABS(E1.v2->z - E1.v1->z);
-    float e2zdiff = (float)ABS(E2.v2->z - E2.v1->z);
+    float e1zdiff = (float)(E1.v2->z - E1.v1->z);
+    float e2zdiff = (float)(E2.v2->z - E2.v1->z);
 
     //put the intensity difference and color difference here for interpolation
-    Vec3 e1cdiff = (E1.v2->c - E1.v1->c);
-    Vec3 e2cdiff = (E2.v2->c - E2.v1->c);
+    float e1idiff = (E1.v2->i - E1.v1->i);
+    float e2idiff = (E2.v2->i - E2.v1->i);
 
     //
 
-    float factor1 = (float)(E2.yMin - E1.yMin) / e1ydiff;
+    float factor1 = (float)(E2.v1->y - E1.v1->y) / e1ydiff;
     float step1 = 1.0f / e1ydiff;
 
     float factor2 = 0.0f;
@@ -281,40 +284,24 @@ void Object3d::drawSpan(Screen* S,Vec3& camera,Vec3& LookTo,Edge& E1, Edge& E2){
     float factor,stepfactor;
 
     float zdiff,z1,z2;
-    Vec3 c1,c2;
+    float i1,i2;
     // loop through the lines between the edges and draw spans
-    for(int y = E2.yMin; y < E2.yMax; y++) {
+    for(int y = E2.v1->y; y <= E2.v2->y; y++) {
         // create and draw span
-        x1 = E1.xMin + (int)(e1xdiff * factor1);
-        x2 = E2.xMin + (int)(e2xdiff * factor2);
+        x1 = E1.v1->x + (int)(e1xdiff * factor1);
+        x2 = E2.v1->x + (int)(e2xdiff * factor2);
 
         z1= E1.v1->z + (int)(e1zdiff * factor1);
         z2= E2.v1->z + (int)(e2zdiff * factor2);
 
-        c1 = E1.v1->c + e1cdiff*factor1;
-        c2 = E2.v1->c + e2cdiff*factor2;
+        i1 = E1.v1->i + e1idiff*factor1;
+        i2 = E2.v1->i + e2idiff*factor2;
 
+        S->line(Vec2(x1,y,z1,i1),Vec2(x2,y,z2,i2),Vec3(255,100,100));
 
-//        //make sure x1 is always smaller
-//        if (x1>x2) swap(x1,x2);
-//        if ((xdiff = x2-x1) == 0) continue;
-
-//        factor = 0;
-//        zdiff = z2-z1;
-//        stepfactor = 1.0/xdiff;
-//        float depth =0;
-////        for (int x = x1; x<x2;x++){
-//            depth = z1+zdiff*factor;
-//            S->setpixel(x,y,depth,c);
-//            S->refresh();
-//            factor += stepfactor;
-//        }
-
-        S->line(Vec2(x1,(float)y,z1),Vec2(x2,(float)y,z2),c1,c2);
         // increase factors
         factor1 += step1;
         factor2 += step2;
-
-
     }
+
 }

@@ -21,7 +21,7 @@ class Screen{
         }
 
         void setpixel(Vec2 P,Vec3 c);
-        inline void setpixel(int x,int y,float dVal, Vec3 c){
+        inline void setpixel(int x,int y,float dVal, Vec3 c ){
             Vec2 temp(x,y);
             temp.z = dVal;
             setpixel(temp,c);
@@ -30,7 +30,7 @@ class Screen{
 //            line(P1,P2,Vec3(255,255,255),Vec3(255,255,255));
 //        }
 //
-        void line(Vec2 P1,Vec2 P2,Vec3 c1 = Vec3(255,255,255), Vec3 c2 = Vec3(255,255,255));
+        void line(Vec2 P1,Vec2 P2,Vec3 cc= Vec3(255,255,255));
         bool WaitQuit();
         void resetZ(){
             delete[] Zbuffer;

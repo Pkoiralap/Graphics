@@ -47,9 +47,6 @@ struct Vertex{
 //Edge is used in scanline filling algorithm
 struct Edge{
     Vec2 *v1,*v2; //we have two vertices
-    float yMin,yMax; //we have min y and max y
-    float xMin,xMax; // this is the x-value
-    float slope; //And yes the Edge has a slope as well
 
     //the initializer function
     Edge(){
@@ -58,39 +55,18 @@ struct Edge{
     }
 
     Edge(Vec2* a, Vec2* b):v1(a),v2(b){
-        //if the y value of v1 is greater, ymax is v1->y
+        //make sure v1 has small y and v2 has larger y value
+        //if not so swap them
         if (v1->y > v2->y){
-            yMax = v1->y;
-            yMin = v2->y;
+            Vec2 *temp = v1;
+            v1 = v2;
+            v2 = temp;
         }
-        //else ymax is v2->y
-        else{
-            yMax = v2->y;
-            yMin = v1->y;
-        }
-
-        //if the x value of v1 is greater, xMax is v1->x
-        if (v1->x > v2->x){
-            xMax = v1->x;
-            xMin = v2->x;
-        }
-        //else ymax is v2->y
-        else{
-            xMax = v2->x;
-            xMin = v1->x;
-        }
-
-
-
-        slope = (v2->y - v1->y) / (v2->x - v1->x);
     }
 
     //simply a copy overloaded with =
     void operator = (Edge Ed){
         v1 = Ed.v1; v2 = Ed.v2;
-        yMin = Ed.yMin; yMax = Ed.yMax;
-        xMin = Ed.xMin; xMax = Ed.xMax;
-        slope = Ed.slope;
     }
 
 };
@@ -122,7 +98,7 @@ class Object3d{
     public:
         void drawWire(Screen* S,Vec3& camera,Vec3& LookTo);
         void fillObject(Screen* S,Vec3& camera,Vec3& LookTo,Vec3& Lpos);
-        void render(Screen* S,Vec3& camera,Vec3& LookTo);
+        void render(Screen* S,Vec3& camera,Vec3& LookTo,Vec3& Lpos);
         void drawSpan(Screen* S,Vec3& camera,Vec3& LookTo,Edge& E1, Edge& E2);
 
     //calculators

@@ -57,7 +57,7 @@ void Screen::setpixel(Vec2 P,Vec3 c)
     //Check for boundaries
     int x = P.x;
     int y = P.y;
-    if (!(x>=0 && x <= width && y >=0 && y<=height)) return;
+    if (!(x>0 && x < width && y >0 && y<height)) return;
     //assert (x>0 && x < width && y >0 && y<height) ;
 
     //Zbuffer[row*col] == Zbuffer[width*height]
@@ -68,22 +68,20 @@ void Screen::setpixel(Vec2 P,Vec3 c)
     else
         Zbuffer[height*x + y] = P.z;
 
-    colour = SDL_MapRGB ( screen->format,c.x,c.y,c.z);
+    colour = SDL_MapRGB (screen->format,c.x,c.y,c.z);
     pixmem32 = (int*) screen->pixels+y*screen->pitch/4+x;
     *pixmem32 = colour;
 }
 
 
 //Draw line considering the depth of the points.
-void Screen::line(Vec2 P1, Vec2 P2,Vec3 c1 , Vec3 c2 ){
+void Screen::line(Vec2 P1, Vec2 P2,Vec3 c){
 
     int x1 = P1.x; int y1 = P1.y;
     int x2 = P2.x; int y2 = P2.y;
 
-    float dStart = P1.z, dEnd = P2.z;// Starting depth value, and ending depth values
-    float dVal = dStart, delta_d = dStart - dEnd; // The depth value of that point, and the difference delta_d
-
-    Vec3 cVal = c2 , delta_c = c2-c1;
+    float dVal = P1.z, delta_d = P2.z - P1.z; // The depth value of that point, and the difference delta_d
+    float iVal = P1.i , delta_i = P2.i-P1.i;    //The intensity values
 
 //    if (x1 <= 0) x1 = 1;
 //    if (x1 >= screen->w) x1 = screen->w -1;
@@ -106,14 +104,14 @@ void Screen::line(Vec2 P1, Vec2 P2,Vec3 c1 , Vec3 c2 ){
     signed char const iy((delta_y > 0) - (delta_y < 0));
     delta_y = ABS(delta_y) << 1;
 
-    setpixel(x1,y1,dVal,cVal);
 
+    setpixel(x1,y1,dVal,c*iVal);
     if (delta_x >= delta_y)
     {
         // error may go below zero
         int error(delta_y - (delta_x >> 1));
         float id = delta_d / (float) delta_x;
-        Vec3 ic = delta_c / (float) delta_x;
+        float ii = delta_i / (float) delta_x;
         while (x1 != x2)
         {
             if ((error >= 0) && (error || (ix > 0)))
@@ -126,8 +124,8 @@ void Screen::line(Vec2 P1, Vec2 P2,Vec3 c1 , Vec3 c2 ){
             error += delta_y;
             x1 += ix;
             dVal += id;
-            cVal = cVal+ic;
-            setpixel(x1, y1 ,dVal, cVal);
+            iVal = iVal+ii;
+            setpixel(x1, y1 ,dVal, c*iVal);
         }
     }
     else
@@ -135,7 +133,7 @@ void Screen::line(Vec2 P1, Vec2 P2,Vec3 c1 , Vec3 c2 ){
         // error may go below zero
         int error(delta_x - (delta_y >> 1));
         float id = delta_d / (float) delta_y;
-        Vec3 ic = delta_c / (float) delta_y;
+        float ii = delta_i / (float) delta_x;
         while (y1 != y2)
         {
             if ((error >= 0) && (error || (iy > 0)))
@@ -148,8 +146,8 @@ void Screen::line(Vec2 P1, Vec2 P2,Vec3 c1 , Vec3 c2 ){
             error += delta_x;
             y1 += iy;
             dVal += id;
-            cVal = cVal+ic;
-            setpixel(x1, y1,dVal, cVal);
+            iVal = iVal+ii;
+            setpixel(x1, y1 ,dVal, c*iVal);
         }
     }
 }
