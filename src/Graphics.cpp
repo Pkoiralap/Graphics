@@ -54,8 +54,8 @@ void Screen::setpixel(Vec2 P,Vec3 c,float intensity ){
     int height = screen->h;
 
     //Check for boundaries
-    int x = P.x;
-    int y = P.y;
+    int x = P.x ;
+    int y = P.y ;
     if (!(x>0 && x < width && y >0 && y<height)) return;
     //if it is a zero intensity point return , no further calculation
     if (intensity == 0) return;

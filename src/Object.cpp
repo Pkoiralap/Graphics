@@ -153,7 +153,7 @@ void Object3d::drawWire(Screen* S,Vec3& camera,Vec3& LookTo){
     Vec2 vert2d[len];
     for (unsigned int i=0;i<len;i++)
     {
-        vert2d[i] = World_To_Pixel(vertBuffer[i].v,camera,LookTo,.3,.3,1024,840);
+        vert2d[i] = World_To_Pixel(vertBuffer[i].v,camera,LookTo,.4,.4,1024,840);
 //        cout << v[i].z << endl;
     }
 
@@ -179,13 +179,6 @@ void Object3d::drawWire(Screen* S,Vec3& camera,Vec3& LookTo){
 }
 
 void Object3d::render(Screen* S,Vec3& camera,Vec3& LookTo,vector<Vec3> Lpos){
-    S->clrscr();
-    S->resetZ();
-    fillObject(S,camera,LookTo,Lpos);
-    S->refresh();
-}
-
-void Object3d::fillObject(Screen* S,Vec3& camera,Vec3& LookTo,vector<Vec3> Lpos){
     unsigned int len = vertBuffer.size();
     Vec2 vert2d[len];
     float intensity;
@@ -203,13 +196,17 @@ void Object3d::fillObject(Screen* S,Vec3& camera,Vec3& LookTo,vector<Vec3> Lpos)
         //vert2d[i].i = 1;
         intensity = temp.dotProduct(vertBuffer[i].norm);
 
-        // if the intensity is -ve we simply avoid the intensity as it is the back face
-        if (intensity < 0) intensity = 0.005;
         //if it is > 1 we truncate it to be 1
         if (intensity > 1) intensity = 1;
 //        cout << v[i].z << endl;
 
-        vert2d[i].i = intensity;
+        // if the intensity is -ve we simply avoid the intensity as it is the back face
+        if (intensity < 0)
+            intensity = 0.005;
+//        else
+//            Lpos.push_back(vertBuffer[i].v);
+        vert2d[i].i = intensity * 0.9;
+
     }
 
     unsigned int t1,t2,t3;
@@ -232,9 +229,9 @@ void Object3d::fillObject(Screen* S,Vec3& camera,Vec3& LookTo,vector<Vec3> Lpos)
         v[2] = vert2d[t3];
 
 //        vertexes
-//        v[0] = Vec2(50,50,-12,.5);
-//        v[1] = Vec2(100,100,-14,.6);
-//        v[2] = Vec2(50,150,-10,.9);
+//        v[1] = Vec2(300,200,-12,.9);
+//        v[2] = Vec2(400,300,-14,1);
+//        v[0] = Vec2(50,150,-10,.1);
 
 
         //Edges
@@ -257,63 +254,92 @@ void Object3d::fillObject(Screen* S,Vec3& camera,Vec3& LookTo,vector<Vec3> Lpos)
         int shortIndex1 = (longIndex + 1) % 3;
         int shortIndex2 = (longIndex + 2) % 3;
 
+        if (E[shortIndex1].v1->y > E[shortIndex2].v1->y)
+            swap (shortIndex1,shortIndex2);
         //now we draw a horizontal line that will go from the y-longest edge to other two edges
         // better use a different function for it
-        drawSpan(S,camera,LookTo,E[longIndex],E[shortIndex1]);
-        drawSpan(S,camera,LookTo,E[longIndex],E[shortIndex2]);
+
+        drawSpan(S,E[longIndex],E[shortIndex1]);
+        drawSpan(S,E[longIndex],E[shortIndex2]);
+
     }
 
 }
 
-void Object3d::drawSpan(Screen* S,Vec3& camera,Vec3& LookTo,Edge& E1, Edge& E2){
+void Object3d::drawSpan(Screen* S,Edge& E1, Edge& E2){
 
     //calculate the y difference for interpolation
     float e1ydiff = (float)(E1.v2->y - E1.v1->y); if (e1ydiff == 0) return;
     float e2ydiff = (float)(E2.v2->y - E2.v1->y); if (e2ydiff == 0) return;
 
-    //calculate the x difference for span processing
-    float e1xdiff = (float)(E1.v2->x - E1.v1->x);
-    float e2xdiff = (float)(E2.v2->x - E2.v1->x);
+//    //calculate the x difference for span processing
+//    float e1xdiff = (float)(E1.v2->x - E1.v1->x);
+//    float e2xdiff = (float)(E2.v2->x - E2.v1->x);
+//
+//    //calculate the z difference
+//    float e1zdiff = (float)(E1.v2->z - E1.v1->z);
+//    float e2zdiff = (float)(E2.v2->z - E2.v1->z);
+//
+//    //put the intensity difference and color difference here for interpolation
+//    float e1idiff = (E1.v2->i - E1.v1->i);
+//    float e2idiff = (E2.v2->i - E2.v1->i);
+//
+//    //
+//
+//    float factor1 = (float)(E2.v1->y - E1.v1->y) / e1ydiff;
+//    float step1 = 1.0f / e1ydiff;
+//
+//    float factor2 = 0.0f;
+//    float step2 = 1.0f / e2ydiff;
 
-    //calculate the z difference
-    float e1zdiff = (float)(E1.v2->z - E1.v1->z);
-    float e2zdiff = (float)(E2.v2->z - E2.v1->z);
+    float x1 = E1.v1->x;
+    float x2 = E2.v1->x;
+    float x1i = (float)(E1.v2->x - E1.v1->x)/ e1ydiff;
+    float x2i = (float)(E2.v2->x - E2.v1->x)/ e2ydiff;
 
-    //put the intensity difference and color difference here for interpolation
-    float e1idiff = (E1.v2->i - E1.v1->i);
-    float e2idiff = (E2.v2->i - E2.v1->i);
+//    float factor,stepfactor;
 
-    //
+    float z1= E1.v1->z;
+    float z2= E2.v1->z;
+    float z1i = (float)(E1.v2->z - E1.v1->z)/e1ydiff;
+    float z2i = (float)(E2.v2->z - E2.v1->z)/e2ydiff;
 
-    float factor1 = (float)(E2.v1->y - E1.v1->y) / e1ydiff;
-    float step1 = 1.0f / e1ydiff;
+    float i1 = E1.v1->i;
+    float i2 = E2.v1->i;
+    float i1i = (float)(E1.v2->i - E1.v1->i)/e1ydiff;
+    float i2i = (float)(E2.v2->i - E2.v1->i)/e2ydiff;
 
-    float factor2 = 0.0f;
-    float step2 = 1.0f / e2ydiff;
-
-
-    float x1,x2,xdiff;
-    float factor,stepfactor;
-
-    float zdiff,z1,z2;
-    float i1,i2;
+//    float x1,x2,z1,z2,i1,i2;
+    unsigned int y;
     // loop through the lines between the edges and draw spans
-    for(int y = E2.v1->y; y <= E2.v2->y; y++) {
+    for(y = E2.v1->y; y < E2.v2->y; y++) {
         // create and draw span
-        x1 = E1.v1->x + (int)(e1xdiff * factor1);
-        x2 = E2.v1->x + (int)(e2xdiff * factor2);
 
-        z1= E1.v1->z + (int)(e1zdiff * factor1);
-        z2= E2.v1->z + (int)(e2zdiff * factor2);
+        x1 += x1i;
+        x2 += x2i;
 
-        i1 = E1.v1->i + e1idiff*factor1;
-        i2 = E2.v1->i + e2idiff*factor2;
+        z1 += z1i;
+        z2 += z2i;
+
+        i1 += i1i;
+        i2 += i2i;
+
+//
+//        x1 = E1.v1->x + (int)(e1xdiff * factor1);
+//        x2 = E2.v1->x + (int)(e2xdiff * factor2);
+//
+//        z1= E1.v1->z + (int)(e1zdiff * factor1);
+//        z2= E2.v1->z + (int)(e2zdiff * factor2);
+//
+//        i1 = E1.v1->i + e1idiff*factor1;
+//        i2 = E2.v1->i + e2idiff*factor2;
 
         S->line(Vec2(x1,y,z1,i1),Vec2(x2,y,z2,i2),Vec3(200,200,50));
-        //S->refresh();
-        // increase factors
-        factor1 += step1;
-        factor2 += step2;
+       // S->refresh();
+
+//        factor1 += step1;
+//        factor2 += step2;
     }
 
+    *(E1.v1) = Vec2(x1,y,z1,i1);
 }
