@@ -49,7 +49,7 @@ int processInput(){
 
     if(keystate[SDLK_l]){
         for(unsigned int i=0;i<Lpos.size();i++)
-            RotateY(Lpos[i],2);
+            RotateX(Lpos[i],2);
     }
 
 
@@ -71,14 +71,11 @@ int processInput(){
 
 int main(){
     Object3d obj;
-    obj.LoadObject("teapot.obj");
+    obj.LoadObject("objects/vemask.obj");
     Screen S(1024,840);
     Lpos.push_back(Vec3(0,10,0));
-//    Lpos.push_back(Vec3(0,10,0));
-//    Lpos.push_back(Vec3(10,10,0));
-//    Lpos.push_back(Vec3(0,0,10));
-//    Lpos.push_back(Vec3(0,0,-20));
-//    Lpos.push_back(Vec3(0,-30,0));
+    Lpos.push_back(Vec3(10,10,0));
+
 
     while (processInput() != -1){
         obj.render(&S,camera,LookTo,Lpos);

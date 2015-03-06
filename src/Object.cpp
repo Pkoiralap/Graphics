@@ -197,14 +197,14 @@ void Object3d::fillObject(Screen* S,Vec3& camera,Vec3& LookTo,vector<Vec3> Lpos)
         //assign intensity here for shading
 
         for(unsigned int j=0; j<Lpos.size();j++)
-            temp = temp - Lpos[j] + camera;
+            temp = temp - Lpos[j] + vertBuffer[i].v ;
 
         temp = temp / temp.magnitude();
         //vert2d[i].i = 1;
         intensity = temp.dotProduct(vertBuffer[i].norm);
 
         // if the intensity is -ve we simply avoid the intensity as it is the back face
-        if (intensity < 0) intensity = 0;
+        if (intensity < 0) intensity = 0.005;
         //if it is > 1 we truncate it to be 1
         if (intensity > 1) intensity = 1;
 //        cout << v[i].z << endl;

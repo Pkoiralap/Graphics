@@ -31,15 +31,15 @@
 		<Compiler>
 			<Add option="-Wall" />
 		</Compiler>
-		<Unit filename="Graphics.cpp" />
-		<Unit filename="Graphics.h" />
-		<Unit filename="MatVec.cpp" />
-		<Unit filename="MatVec.h" />
-		<Unit filename="Object.cpp" />
-		<Unit filename="Object.h" />
-		<Unit filename="Transformation.cpp" />
-		<Unit filename="Transformation.h" />
-		<Unit filename="main.cpp" />
+		<Unit filename="../ Graphics/Graphics.cpp" />
+		<Unit filename="../ Graphics/Graphics.h" />
+		<Unit filename="../ Graphics/MatVec.cpp" />
+		<Unit filename="../ Graphics/MatVec.h" />
+		<Unit filename="../ Graphics/Object.cpp" />
+		<Unit filename="../ Graphics/Object.h" />
+		<Unit filename="../ Graphics/Transformation.cpp" />
+		<Unit filename="../ Graphics/Transformation.h" />
+		<Unit filename="../ Graphics/main.cpp" />
 		<Extensions>
 			<code_completion />
 			<debugger />
