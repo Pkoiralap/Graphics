@@ -73,11 +73,12 @@ int main(){
     Object3d obj;
     obj.LoadObject("teapot.obj");
     Screen S(1024,840);
-    Lpos.push_back(Vec3(10,0,0));
     Lpos.push_back(Vec3(0,10,0));
-    Lpos.push_back(Vec3(0,0,10));
-//    Lpos.push_back(Vec3(-10,0,0));
-//    Lpos.push_back(Vec3(0,0,-10));
+//    Lpos.push_back(Vec3(0,10,0));
+//    Lpos.push_back(Vec3(10,10,0));
+//    Lpos.push_back(Vec3(0,0,10));
+//    Lpos.push_back(Vec3(0,0,-20));
+//    Lpos.push_back(Vec3(0,-30,0));
 
     while (processInput() != -1){
         obj.render(&S,camera,LookTo,Lpos);

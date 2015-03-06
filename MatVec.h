@@ -26,7 +26,7 @@ class Vec2
             float i; // i for intensity
 
 
-    public: Vec2(){}
+    public: Vec2(){i = 1;}
             Vec2(float xx, float yy,float zz=0,float ii=1): x(xx) ,y(yy),z(zz),i(ii){}
             Vec2(const Vec2& in):x(in.x),y(in.y),z(in.z),i(in.i){}
             void operator = (const Vec2& in){

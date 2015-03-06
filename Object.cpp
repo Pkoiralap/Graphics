@@ -189,17 +189,27 @@ void Object3d::fillObject(Screen* S,Vec3& camera,Vec3& LookTo,vector<Vec3> Lpos)
     unsigned int len = vertBuffer.size();
     Vec2 vert2d[len];
     float intensity;
-    Vec3 temp(0,0,0);
     for (unsigned int i=0;i<len;i++)
     {
-        vert2d[i] = World_To_Pixel(vertBuffer[i].v,camera,LookTo,.4,.4,1024,840);
+        Vec3 temp(0,0,0);
+
+        vert2d[i] = World_To_Pixel(vertBuffer[i].v,camera,LookTo,.5,.5,1024,840);
         //assign intensity here for shading
+
         for(unsigned int j=0; j<Lpos.size();j++)
-            temp = temp + vertBuffer[i].v - Lpos[j] ;
+            temp = temp - Lpos[j] + camera;
 
         temp = temp / temp.magnitude();
-        vert2d[i].i = temp.dotProduct(vertBuffer[i].norm);
+        //vert2d[i].i = 1;
+        intensity = temp.dotProduct(vertBuffer[i].norm);
+
+        // if the intensity is -ve we simply avoid the intensity as it is the back face
+        if (intensity < 0) intensity = 0;
+        //if it is > 1 we truncate it to be 1
+        if (intensity > 1) intensity = 1;
 //        cout << v[i].z << endl;
+
+        vert2d[i].i = intensity;
     }
 
     unsigned int t1,t2,t3;
@@ -299,8 +309,8 @@ void Object3d::drawSpan(Screen* S,Vec3& camera,Vec3& LookTo,Edge& E1, Edge& E2){
         i1 = E1.v1->i + e1idiff*factor1;
         i2 = E2.v1->i + e2idiff*factor2;
 
-        S->line(Vec2(x1,y,z1,i1),Vec2(x2,y,z2,i2),Vec3(255,255,0));
-
+        S->line(Vec2(x1,y,z1,i1),Vec2(x2,y,z2,i2),Vec3(200,200,50));
+        //S->refresh();
         // increase factors
         factor1 += step1;
         factor2 += step2;

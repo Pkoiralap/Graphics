@@ -20,18 +20,17 @@ class Screen{
             Zbuffer = new float [width*height](); // () for setting everything to zero
         }
 
-        void setpixel(Vec2 P,Vec3 c);
-        inline void setpixel(int x,int y,float dVal, Vec3 c ){
+        void setpixel(Vec2 P,Vec3 c,float intensity =.8);
+        inline void setpixel(int x,int y,float dVal, Vec3 c,float intensity =1 ){
             Vec2 temp(x,y);
             temp.z = dVal;
-            setpixel(temp,c);
+            setpixel(temp,c,intensity);
         }
 //        void line(Vec2 P1,Vec2 P2){
 //            line(P1,P2,Vec3(255,255,255),Vec3(255,255,255));
 //        }
 //
         void line(Vec2 P1,Vec2 P2,Vec3 cc= Vec3(255,255,255));
-        bool WaitQuit();
         void resetZ(){
             delete[] Zbuffer;
             Zbuffer = new float [(screen->w)*(screen->h)]();

@@ -46,8 +46,7 @@
 //
 //}
 
-void Screen::setpixel(Vec2 P,Vec3 c)
-{
+void Screen::setpixel(Vec2 P,Vec3 c,float intensity ){
     int *pixmem32;
     int colour;
 
@@ -58,6 +57,9 @@ void Screen::setpixel(Vec2 P,Vec3 c)
     int x = P.x;
     int y = P.y;
     if (!(x>0 && x < width && y >0 && y<height)) return;
+    //if it is a zero intensity point return , no further calculation
+    if (intensity == 0) return;
+
     //assert (x>0 && x < width && y >0 && y<height) ;
 
     //Zbuffer[row*col] == Zbuffer[width*height]
@@ -68,7 +70,7 @@ void Screen::setpixel(Vec2 P,Vec3 c)
     else
         Zbuffer[height*x + y] = P.z;
 
-    colour = SDL_MapRGB (screen->format,c.x,c.y,c.z);
+    colour = SDL_MapRGB (screen->format,c.x*intensity,c.y*intensity,c.z*intensity);
     pixmem32 = (int*) screen->pixels+y*screen->pitch/4+x;
     *pixmem32 = colour;
 }
@@ -105,7 +107,7 @@ void Screen::line(Vec2 P1, Vec2 P2,Vec3 c){
     delta_y = ABS(delta_y) << 1;
 
 
-    setpixel(x1,y1,dVal,c*iVal);
+    setpixel(x1,y1,dVal,c,iVal);
     if (delta_x >= delta_y)
     {
         // error may go below zero
@@ -125,7 +127,7 @@ void Screen::line(Vec2 P1, Vec2 P2,Vec3 c){
             x1 += ix;
             dVal += id;
             iVal = iVal+ii;
-            setpixel(x1, y1 ,dVal, c*iVal);
+            setpixel(x1, y1 ,dVal, c,iVal);
         }
     }
     else
@@ -147,33 +149,7 @@ void Screen::line(Vec2 P1, Vec2 P2,Vec3 c){
             y1 += iy;
             dVal += id;
             iVal = iVal+ii;
-            setpixel(x1, y1 ,dVal, c*iVal);
+            setpixel(x1, y1 ,dVal, c,iVal);
         }
     }
 }
-
-bool Screen::WaitQuit()
-{
-    SDL_Event event;
-    bool keypress = false;
-
-    while (!keypress)
-    {
-        while(SDL_PollEvent(&event))
-        {
-            switch(event.type)
-            {
-            //If the cross on the top is pressed it is triggered
-            case SDL_QUIT:
-                keypress = true;
-                break;
-            //Triggered for keydown
-            case SDL_KEYDOWN:
-                keypress = true;
-                break;
-            }
-        }
-    }
-    return true; //wait ends
-}
-
