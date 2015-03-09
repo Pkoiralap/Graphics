@@ -30,7 +30,9 @@ class Screen{
 //            line(P1,P2,Vec3(255,255,255),Vec3(255,255,255));
 //        }
 //
-        void line(Vec2 P1,Vec2 P2,Vec3 cc= Vec3(255,255,255));
+        void gn_line(Vec2 P1,Vec2 P2,Vec3 c= Vec3(255,255,255)); // gn_line
+        void st_line(Vec2 P1,Vec2 P2,Vec3 c= Vec3(255,255,255)); // line parallel to x axis
+
         void resetZ(){
             delete[] Zbuffer;
             Zbuffer = new float [(screen->w)*(screen->h)]();

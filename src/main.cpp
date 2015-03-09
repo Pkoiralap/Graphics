@@ -75,7 +75,7 @@ int main(){
     Screen S(1024,840);
 
     Object3d obj2;
-    obj2.LoadObject("objects/vemask.obj");
+    obj2.LoadObject("objects/teapot.obj");
 //
     Lpos.push_back(Vec3(10,0,0));
     Lpos.push_back(Vec3(-10,0,0));
@@ -86,7 +86,7 @@ int main(){
 
 
     while (processInput() != -1){
-        obj2.render(&S,camera,LookTo,Lpos);
+        obj2.render(&S,camera,LookTo,Lpos,.3,.3);
         S.refresh();
         S.clrscr();
         S.resetZ();

@@ -72,9 +72,30 @@ void Screen::setpixel(Vec2 P,Vec3 c,float intensity ){
     *pixmem32 = colour;
 }
 
+void Screen::st_line(Vec2 P1, Vec2 P2, Vec3 c){
+    if (P1.x > P2.x){
+        Vec2 temp = P1;
+        P1 = P2;
+        P2 = temp;
+    }
+
+    int x1 = P1.x; int y1 = P1.y;
+    int x2 = P2.x; int y2 = P2.y;
+
+    float dVal = P1.z, delta_d = P2.z - P1.z;       // The depth value of that point, and the difference delta_d
+    float iVal = P1.i, delta_i = P2.i - P1.i;       //The intensity values
+
+    float dx = x2-x1;
+    for (int i=x1; i<= x2; ++i) {
+        setpixel(i, y1, dVal, c, iVal);
+        dVal += delta_d/dx;
+        iVal += delta_i/dx;
+    }
+
+}
 
 //Draw line considering the depth of the points.
-void Screen::line(Vec2 P1, Vec2 P2,Vec3 c){
+void Screen::gn_line(Vec2 P1, Vec2 P2,Vec3 c){
 
     int x1 = P1.x; int y1 = P1.y;
     int x2 = P2.x; int y2 = P2.y;

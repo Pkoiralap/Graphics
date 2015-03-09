@@ -98,8 +98,8 @@ class Object3d{
 
     //Object fillers
     public:
-        void drawWire(Screen* S,Vec3& camera,Vec3& LookTo);
-        void render(Screen* S,Vec3& camera,Vec3& LookTo,vector<Vec3> Lpos);
+        void drawWire(Screen* S,Vec3& camera,Vec3& LookTo,float pWidth,float pHeight);
+        void render(Screen* S,Vec3& camera,Vec3& LookTo,vector<Vec3> Lpos,float pWidth,float pHeight);
         void drawSpan(Screen* S,Edge& E1, Edge& E2);
 
     //calculators
