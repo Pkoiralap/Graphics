@@ -33,14 +33,16 @@ using namespace std;
 struct Vertex{
     Vec3 v;     //the 3d point of the normal
     Vec3 norm; // The vertex normal
-    int cnt; //cnt keeps track of the shared surfaces
+    int cnt = 0;
 
     Vertex(){
+        v = Vec3(0,0,0);
         norm = Vec3(0,0,0);
     }
 
     Vertex(const Vec3& input){
         v = input;
+        norm = Vec3(0,0,0);
     }
 };
 

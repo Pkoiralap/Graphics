@@ -57,16 +57,13 @@ void Screen::setpixel(Vec2 P,Vec3 c,float intensity ){
     int x = P.x ;
     int y = P.y ;
     if (!(x>0 && x < width && y >0 && y<height)) return;
-    //if it is a zero intensity point return , no further calculation
-    if (intensity == 0) return;
-
     //assert (x>0 && x < width && y >0 && y<height) ;
 
     //Zbuffer[row*col] == Zbuffer[width*height]
     //Zbuffer[x][y] = Zbuffer[x*col+y]
     //If the present z value is greater than the previous on, do not draw i
     if (P.z > Zbuffer[height*x + y])
-        return;
+       return;
     else
         Zbuffer[height*x + y] = P.z;
 
@@ -82,8 +79,8 @@ void Screen::line(Vec2 P1, Vec2 P2,Vec3 c){
     int x1 = P1.x; int y1 = P1.y;
     int x2 = P2.x; int y2 = P2.y;
 
-    float dVal = P1.z, delta_d = P2.z - P1.z; // The depth value of that point, and the difference delta_d
-    float iVal = P1.i , delta_i = P2.i-P1.i;    //The intensity values
+    float dVal = P1.z, delta_d = P2.z - P1.z;       // The depth value of that point, and the difference delta_d
+    float iVal = P1.i, delta_i = P2.i - P1.i;       //The intensity values
 
 //    if (x1 <= 0) x1 = 1;
 //    if (x1 >= screen->w) x1 = screen->w -1;
@@ -126,7 +123,7 @@ void Screen::line(Vec2 P1, Vec2 P2,Vec3 c){
             error += delta_y;
             x1 += ix;
             dVal += id;
-            iVal = iVal+ii;
+            iVal += ii;
             setpixel(x1, y1 ,dVal, c,iVal);
         }
     }
@@ -135,7 +132,7 @@ void Screen::line(Vec2 P1, Vec2 P2,Vec3 c){
         // error may go below zero
         int error(delta_x - (delta_y >> 1));
         float id = delta_d / (float) delta_y;
-        float ii = delta_i / (float) delta_x;
+        float ii = delta_i / (float) delta_y;
         while (y1 != y2)
         {
             if ((error >= 0) && (error || (iy > 0)))
@@ -148,7 +145,7 @@ void Screen::line(Vec2 P1, Vec2 P2,Vec3 c){
             error += delta_x;
             y1 += iy;
             dVal += id;
-            iVal = iVal+ii;
+            iVal += ii;
             setpixel(x1, y1 ,dVal, c,iVal);
         }
     }

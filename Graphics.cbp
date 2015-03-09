@@ -33,10 +33,12 @@
 		<Compiler>
 			<Add option="-Wall" />
 		</Compiler>
+		<Unit filename="include/Fire.h" />
 		<Unit filename="include/Graphics.h" />
 		<Unit filename="include/MatVec.h" />
 		<Unit filename="include/Object.h" />
 		<Unit filename="include/Transformation.h" />
+		<Unit filename="src/Fire.cpp" />
 		<Unit filename="src/Graphics.cpp" />
 		<Unit filename="src/MatVec.cpp" />
 		<Unit filename="src/Object.cpp" />

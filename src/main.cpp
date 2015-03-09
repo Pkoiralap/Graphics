@@ -70,30 +70,28 @@ int processInput(){
 }
 
 int main(){
-    Object3d obj1;
-    obj1.LoadObject("objects/teapot.obj");
+//    Object3d obj1;
+//    obj1.LoadObject("objects/teapot.obj");
     Screen S(1024,840);
-//
+
     Object3d obj2;
     obj2.LoadObject("objects/vemask.obj");
-
-//    Lpos.push_back(Vec3(0,100,0));
-//    Lpos.push_back(Vec3(10,0,100));
-//    Lpos.push_back(Vec3(10,-10,0));
-//    Lpos.push_back(Vec3(-100,0,0));
-//    Lpos.push_back(Vec3(0,0,-100));
-
-     Lpos.push_back(Vec3(0,10,0));
-    Lpos.push_back(Vec3(10,10,0));
-
+//
+    Lpos.push_back(Vec3(10,0,0));
+    Lpos.push_back(Vec3(-10,0,0));
+    Lpos.push_back(Vec3(0,100,0));
+    Lpos.push_back(Vec3(0,-100,0));
+    Lpos.push_back(Vec3(0,0,100));
+    Lpos.push_back(Vec3(0,0,-100));
 
 
     while (processInput() != -1){
-        S.clrscr();
-        S.resetZ();
-        obj1.render(&S,camera,LookTo,Lpos);
         obj2.render(&S,camera,LookTo,Lpos);
         S.refresh();
+        S.clrscr();
+        S.resetZ();
+//        obj1.render(&S,camera,LookTo,Lpos);
+
     }
 
     return 0;
