@@ -22,7 +22,7 @@ void Object3d::calculateNorm(){
         //determine the normal of the traingle and assign
         Vec3 A = (V3-V1)/((V3-V1).magnitude());
         Vec3 B = (V2-V1)/((V2-V1).magnitude());
-        norm = A.crossProduct(B);
+        norm = B.crossProduct(A);
         norm = norm / norm.magnitude();
 
         vertBuffer[t1].norm = norm + vertBuffer[t1].norm ;
@@ -220,7 +220,7 @@ void Object3d::drawWire(Screen* S,Vec3& camera,Vec3& LookTo,float pWidth,float p
     S->refresh();
 }
 
-void Object3d::render(Screen* S,Vec3& camera,Vec3& LookTo,vector<Vec3> Lpos,float pWidth,float pHeight){
+void Object3d::render(Screen* S,Vec3& camera,Vec3& LookTo,Fire F,float pWidth,float pHeight){
     unsigned int len = vertBuffer.size();
     Vec2 vert2d[len];
     float intensity = 0;
@@ -232,25 +232,24 @@ void Object3d::render(Screen* S,Vec3& camera,Vec3& LookTo,vector<Vec3> Lpos,floa
 
         vert2d[i] = World_To_Pixel(vertBuffer[i].v,camera,LookTo,pWidth,pHeight,1024,840);
 //        //assign intensity here for shading
-        for(unsigned int j=0; j<Lpos.size();j++){
-            Vec3 A =  Lpos[j] - vertBuffer[i].v ;
+        for(unsigned int j=0; j<F.nOfParticles;j+=10){
+            Vec3 A = F.fPart[j].pos - camera;
             A = A / A.magnitude();
             intensity = intensity + vertBuffer[i].norm.dotProduct(A);
         }
-        intensity *= 1;
         //if it is > 1 we truncate it to be 1
+//        intensity *= 2;
+        intensity /= 4000;
         if (intensity > 1)
             intensity = 1;
 //        cout << v[i].z << endl;
 
         // if the intensity is -ve we simply avoid the intensity as it is the back face
         if (intensity < 0)
-            intensity = 0.005;
+            intensity = 0.05;
 //        else
 //            Lpos.push_back(vertBuffer[i].v);
          vert2d[i].i = intensity;
-
-
     }
 
     unsigned int t1,t2,t3;
@@ -344,7 +343,7 @@ void Object3d::drawSpan(Screen* S,Edge& E1, Edge& E2){
         z2 += z2i;
         i1 += i1i;
         i2 += i2i;
-        S->st_line(Vec2(x1,y,z1,i1),Vec2(x2,y,z2,i2),Vec3(200,200,00));
+        S->st_line(Vec2(x1,y,z1,i1),Vec2(x2,y,z2,i2),Vec3(200,50,00));
     }
     *(E1.v1) = Vec2(x1,y,z1,i1);
 }

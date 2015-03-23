@@ -14,8 +14,11 @@ class Screen{
     SDL_Surface* screen;
     float* Zbuffer;
     public:
+        Uint32 initTime;
+
         Screen(int width = 640,int height=480){
             SDL_Init(SDL_INIT_EVERYTHING);
+            initTime = SDL_GetTicks();
             screen = SDL_SetVideoMode(width,height,32,SDL_SWSURFACE);
             Zbuffer = new float [width*height](); // () for setting everything to zero
         }
@@ -26,6 +29,14 @@ class Screen{
             temp.z = dVal;
             setpixel(temp,c,intensity);
         }
+
+        void setpixel_a(Vec2 P,Vec3 c,float intensity,float alpha );
+        inline void setpixel_a(int x, int y, float dVal ,Vec3 c,float intensity,float alpha ){
+            Vec2 temp(x,y);
+            temp.z = dVal;
+            setpixel_a(temp,c,intensity,alpha);
+        }
+
 //        void line(Vec2 P1,Vec2 P2){
 //            line(P1,P2,Vec3(255,255,255),Vec3(255,255,255));
 //        }
@@ -38,6 +49,7 @@ class Screen{
             Zbuffer = new float [(screen->w)*(screen->h)]();
         }
         void refresh(){
+            initTime = SDL_GetTicks();
             SDL_Flip(screen);
         }
 

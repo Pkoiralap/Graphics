@@ -46,6 +46,28 @@
 //
 //}
 
+void Screen::setpixel_a(Vec2 P,Vec3 c,float intensity,float alpha ){
+    int *pixmem32;
+    int colour;
+
+    int width = screen->w;
+    int height = screen->h;
+
+    //Check for boundaries
+    int x = P.x ;
+    int y = P.y ;
+    if (!(x>0 && x < width && y >0 && y<height)) return;
+    //assert (x>0 && x < width && y >0 && y<height) ;
+
+    //Zbuffer[row*col] == Zbuffer[width*height]
+    //Zbuffer[x][y] = Zbuffer[x*col+y]
+    //If the present z value is greater than the previous on, do not draw i
+
+    colour = SDL_MapRGBA (screen->format,c.x*intensity,c.y*intensity,c.z*intensity,alpha);
+    pixmem32 = (int*) screen->pixels+y*screen->pitch/4+x;
+    *pixmem32 = colour;
+}
+
 void Screen::setpixel(Vec2 P,Vec3 c,float intensity ){
     int *pixmem32;
     int colour;

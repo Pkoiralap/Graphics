@@ -4,12 +4,14 @@
 #include "Graphics.h"
 #include "MatVec.h"
 #include "Transformation.h"
+#include "Fire.h"
 #include <vector>
 #include <iostream>
 #include <fstream>
 #include <sstream>
 #include <string>
 #include <list>
+
 
 using namespace std;
 
@@ -38,11 +40,13 @@ struct Vertex{
     Vertex(){
         v = Vec3(0,0,0);
         norm = Vec3(0,0,0);
+
     }
 
     Vertex(const Vec3& input){
         v = input;
         norm = Vec3(0,0,0);
+
     }
 };
 
@@ -99,7 +103,7 @@ class Object3d{
     //Object fillers
     public:
         void drawWire(Screen* S,Vec3& camera,Vec3& LookTo,float pWidth,float pHeight);
-        void render(Screen* S,Vec3& camera,Vec3& LookTo,vector<Vec3> Lpos,float pWidth,float pHeight);
+        void render(Screen* S,Vec3& camera,Vec3& LookTo,Fire F,float pWidth,float pHeight);
         void drawSpan(Screen* S,Edge& E1, Edge& E2);
 
     //calculators
