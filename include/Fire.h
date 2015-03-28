@@ -6,6 +6,7 @@
 //#include <random>
 #include <vector>
 #include <iostream>
+#include <math.h>
 
 
 //We have a fire particle class here

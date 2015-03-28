@@ -86,10 +86,11 @@ class Object3d{
         vector <Vec3> vertexNorm;       //List of vertex normal
 
         bool texture;
+        int xoffset,yoffset;            //to move the object by some distance in x
 
     //adders
     public:
-        Object3d(){texture = false;}
+        Object3d(int xffset = 0,int yffset = 0){texture = false;xoffset = xffset;yoffset = yffset;}
         void addVertex(Vec3& v){vertBuffer.push_back(Vertex(v));}
         void addSurface(Vec3& v){surfaceBuffer.push_back(v);}
         void addNormal(Vec3& v){normBuffer.push_back(v);}

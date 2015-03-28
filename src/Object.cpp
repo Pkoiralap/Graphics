@@ -90,6 +90,11 @@ void Object3d::LoadObject(string filename){
     normBuffer.clear();
     textureBuffer.clear();
 
+     bool vertonly = true, vertnorm = false, vertnormtext = false,typefixed = false;
+    //These three bools say that the face contains either vertex only
+    //or vertex and normal only or
+    //vertex normal and texture
+
     ifstream obj(filename.c_str());
     if (!obj.is_open()) throw "Can not open";
 
@@ -135,36 +140,69 @@ void Object3d::LoadObject(string filename){
 //        }
 
         else if(keyword == "f"){
+            Vec3 v[3];
+
             line = line.substr(1,line.length()-1); //remove the preceding f
             while(line.compare(0,1," ")==0)
                 line.erase(line.begin()); // remove leading whitespaces
             while(line.size()>0 && line.compare(line.size()-1,1," ")==0)
             line.erase(line.end()-1); // remove trailing whitespaces
 
-//
-          // replaceAll(line,"//"," "); //replace // with /0/ for texture to be 0
-//            replaceAll(line,"/"," "); //remove the / for easy calculatoin
-            istringstream lstream(line);
-            //v contains .x = vertex index, .y = texture .z= normal index
 
-            Vec3 v[3];
-            lstream >> v[0].x;
-//            lstream >> v[0].y;
-           // lstream >> v[0].z;
+            ///These sets of command run only once to determine the type of object definition
+            std::size_t found = line.find("//");
+            if (found!=std::string::npos && typefixed == false){
+                vertonly = false; vertnorm = true; typefixed = true;
+            }
+            // a // means v and n
 
+            found = line.find('/');
+            if (found!=std::string::npos && typefixed == false){
+                vertonly = false; vertnormtext = true; typefixed = true;
+            }
+            //for a single / it is v and t and n
 
-            lstream >> v[1].x;
-           // lstream >> v[1].y;
-           // lstream >> v[1].z;
+            if (typefixed == false){
+                typefixed = true;
+            }
+            //else it means vertonly
+            ///Now we know if our face contains vertex only, vertex and normal only , or v&n&texture
 
+            if (vertnormtext){
+                replaceAll(line,"/"," "); //remove the / for easy calculatoin
+                istringstream lstream(line);
+                //v contains .x = vertex index, .y = texture .z= normal index
 
-            lstream >> v[2].x;
-            //lstream >> v[2].y;
-            //lstream >> v[2].z;
+                lstream >> v[0].x;lstream >> v[0].y;lstream >> v[0].z;
+                lstream >> v[1].x;lstream >> v[1].y;lstream >> v[1].z;
+                lstream >> v[2].x;lstream >> v[2].y;lstream >> v[2].z;
 
-            addSurface(v[0]);
-            addSurface(v[1]);
-            addSurface(v[2]);
+                addSurface(v[0]);addSurface(v[1]);addSurface(v[2]);
+            }
+
+            else if (vertnorm){
+                replaceAll(line,"//"," "); //remove the / for easy calculatoin
+                istringstream lstream(line);
+                //v contains .x = vertex index, .y = texture .z= normal index
+
+                lstream >> v[0].x;lstream >> v[0].z;
+                lstream >> v[1].x;lstream >> v[1].z;
+                lstream >> v[2].x;lstream >> v[2].z;
+
+                addSurface(v[0]);addSurface(v[1]);addSurface(v[2]);
+            }
+
+            else{
+                istringstream lstream(line);
+                //v contains .x = vertex index, .y = texture .z= normal index
+
+                lstream >> v[0].x;
+                lstream >> v[1].x;
+                lstream >> v[2].x;
+
+                addSurface(v[0]);addSurface(v[1]);addSurface(v[2]);
+            }
+
         }
     }
     obj.close();
@@ -232,14 +270,14 @@ void Object3d::render(Screen* S,Vec3& camera,Vec3& LookTo,Fire F,float pWidth,fl
 
         vert2d[i] = World_To_Pixel(vertBuffer[i].v,camera,LookTo,pWidth,pHeight,1024,840);
 //        //assign intensity here for shading
-        for(unsigned int j=0; j<F.nOfParticles;j+=10){
+        for(unsigned int j=0; j<F.nOfParticles/20;j+=10){
             Vec3 A = F.fPart[j].pos - camera;
             A = A / A.magnitude();
             intensity = intensity + vertBuffer[i].norm.dotProduct(A);
         }
         //if it is > 1 we truncate it to be 1
 //        intensity *= 2;
-        intensity /= 4000;
+        intensity /= 20;
         if (intensity > 1)
             intensity = 1;
 //        cout << v[i].z << endl;
@@ -265,7 +303,7 @@ void Object3d::render(Screen* S,Vec3& camera,Vec3& LookTo,Fire F,float pWidth,fl
         t1 =surfaceBuffer[i].x-1;
         t2 =surfaceBuffer[i+1].x-1;
         t3 =surfaceBuffer[i+2].x-1;
-
+       // if (t1 <0 || t2 <0||t3 <0) continue;
       //vertexes
       v[0] = vert2d[t1];
       v[1] = vert2d[t2];
@@ -343,7 +381,8 @@ void Object3d::drawSpan(Screen* S,Edge& E1, Edge& E2){
         z2 += z2i;
         i1 += i1i;
         i2 += i2i;
-        S->st_line(Vec2(x1,y,z1,i1),Vec2(x2,y,z2,i2),Vec3(200,50,00));
+        S->st_line(Vec2(x1+xoffset,y+yoffset,z1,i1),Vec2(x2+xoffset,y+yoffset,z2,i2),Vec3(255,50,00));
+        //S->refresh();
     }
     *(E1.v1) = Vec2(x1,y,z1,i1);
 }

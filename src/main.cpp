@@ -4,7 +4,10 @@
 #include "Transformation.h"
 #include "Fire.h"
 
-Vec3 camera(25,-15,-25);
+Vec3 camera(-5,0,-40);
+Vec3 fcamera(-5,0,-80);
+
+//Vec3 camera(-25,-25,-25);
 Vec3 LookTo(0,0,0);
 vector<Vec3> Lpos;
 
@@ -33,29 +36,16 @@ int processInput(){
     }
 
     if(keystate[SDLK_LEFT]){
-        RotateX(camera,2);
-         for(unsigned int i=0;i<Lpos.size();i++)
-            RotateX(Lpos[i],2);
+        RotateY(camera,-2);
     }
 
     if(keystate[SDLK_RIGHT]){
         RotateY(camera,2);
-          for(unsigned int i=0;i<Lpos.size();i++)
-            RotateY(Lpos[i],2);
-
     }
 
     if(keystate[SDLK_UP]){
-        RotateZ(camera,2);
-         for(unsigned int i=0;i<Lpos.size();i++)
-            RotateZ(Lpos[i],2);
+        RotateX(camera,2);
     }
-
-    if(keystate[SDLK_l]){
-        for(unsigned int i=0;i<Lpos.size();i++)
-            RotateY(Lpos[i],2);
-    }
-
 
     SDL_Event event;
     while(SDL_PollEvent(&event))
@@ -74,11 +64,14 @@ int processInput(){
 }
 
 int main(){
-//    Object3d obj1;
-//    obj1.LoadObject("objects/teapot.obj");
     Screen S(1024,840);
-    Object3d obj2;
-    obj2.LoadObject("objects/vemask.obj");
+    Object3d obj2(0,140);
+    obj2.LoadObject("objects/torch.obj");
+
+    Object3d obj1(200,0);
+    obj1.LoadObject("objects/teapot.obj");
+
+    Fire F(20,&S,fcamera,LookTo,30,30);
 //
 //    Lpos.push_back(Vec3(10,0,0));
 //    Lpos.push_back(Vec3(-10,0,0));
@@ -87,25 +80,17 @@ int main(){
 //    Lpos.push_back(Vec3(0,0,100));
 //    Lpos.push_back(Vec3(0,0,-100));
 
-   Fire F(20,&S,camera,LookTo,20,20);
-
     while (processInput() != -1){
 
         S.clrscr();
         S.resetZ();
 
         F.showFire();
-        F.updateFire(camera,LookTo);
-
-
-        obj2.render(&S,camera,LookTo,F,.9,.9);
-
-
-        //cout << "FPS: " << 1000/(SDL_GetTicks() - S.initTime) << endl;
+        F.updateFire(fcamera,LookTo);
+        obj2.render(&S,camera,LookTo,F,10,10);
+        obj1.render(&S,camera,LookTo,F,1,1);
+        cout << "FPS: " << 1000/(SDL_GetTicks() - S.initTime) << endl;
         S.refresh();
-
-//        obj1.render(&S,camera,LookTo,Lpos);
-
 
     }
 
