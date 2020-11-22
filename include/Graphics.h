@@ -1,8 +1,23 @@
 #ifndef GRAPHICS_H_
 #define GRAPHICS_H_
 
-
 #include <SDL/SDL.h>
+#include "SDL/SDL_main.h"
+#include "SDL/SDL_stdinc.h"
+#include "SDL/SDL_audio.h"
+#include "SDL/SDL_cdrom.h"
+#include "SDL/SDL_cpuinfo.h"
+#include "SDL/SDL_endian.h"
+#include "SDL/SDL_error.h"
+#include "SDL/SDL_events.h"
+#include "SDL/SDL_loadso.h"
+#include "SDL/SDL_mutex.h"
+#include "SDL/SDL_rwops.h"
+#include "SDL/SDL_thread.h"
+#include "SDL/SDL_timer.h"
+#include "SDL/SDL_video.h"
+#include "SDL/SDL_version.h"
+
 #include "MatVec.h"
 #include <math.h>
 #include <cassert>
@@ -37,10 +52,6 @@ class Screen{
             setpixel_a(temp,c,intensity,alpha);
         }
 
-//        void line(Vec2 P1,Vec2 P2){
-//            line(P1,P2,Vec3(255,255,255),Vec3(255,255,255));
-//        }
-//
         void gn_line(Vec2 P1,Vec2 P2,Vec3 c= Vec3(255,255,255)); // gn_line
         void st_line(Vec2 P1,Vec2 P2,Vec3 c= Vec3(255,255,255)); // line parallel to x axis
 

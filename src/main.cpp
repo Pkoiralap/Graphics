@@ -5,6 +5,7 @@
 #include "Fire.h"
 
 Vec3 camera(-5,0,-40);
+Vec3 torchcam(-5,0,-40);
 Vec3 fcamera(-5,0,-80);
 
 //Vec3 camera(-25,-25,-25);
@@ -63,7 +64,9 @@ int processInput(){
     return 0;
 }
 
-int main(){
+
+#undef main
+int main(int argc, char *argv[]){
     Screen S(1024,840);
     Object3d obj2(0,140);
     obj2.LoadObject("objects/torch.obj");
@@ -80,18 +83,22 @@ int main(){
 //    Lpos.push_back(Vec3(0,0,100));
 //    Lpos.push_back(Vec3(0,0,-100));
 
-    while (processInput() != -1){
 
+    while (processInput() != -1){
         S.clrscr();
         S.resetZ();
-
+        
         F.showFire();
         F.updateFire(fcamera,LookTo);
-        obj2.render(&S,camera,LookTo,F,10,10);
+        
+        obj2.render(&S,torchcam,LookTo,F,10,10);
         obj1.render(&S,camera,LookTo,F,1,1);
-        cout << "FPS: " << 1000/(SDL_GetTicks() - S.initTime) << endl;
+        
         S.refresh();
 
+        RotateX(camera,1);
+        RotateY(camera,1);
+        // cout << "FPS: " << 1000/(SDL_GetTicks() - S.initTime) <<  " " << &S << endl;
     }
 
     return 0;

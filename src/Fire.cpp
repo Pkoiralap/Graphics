@@ -40,28 +40,33 @@ void Fire::updateFire(Vec3& cam,Vec3& LT){
         }
         fPart[i].vel = Vec3(sin(i)*10*ran,20*fPart[i].i,0);
         fPart[i].pos = fPart[i].pos + fPart[i].vel;
-//        std::cout << fPart[i].pos.x << " "  << fPart[i].pos.y << " " << fPart[i].pos.z << std::endl;
 
         fPart[i].i -= (rand() % 10) * .01;
-
-        //initFire(camera,LookTo,pHeiht,pWidth);
     }
     initFire(camera,LookTo,pWidth,pHeight);
-    nOfParticles = fPart.size();
 }
 
 void Fire::showFire(){
     Vec2 vert2d[nOfParticles];
     for (unsigned i =0;i<nOfParticles;i++){
         vert2d[i] = World_To_Pixel(fPart[i].pos,camera,LookTo,pWidth,pWidth,1024,840);
-//        vert2d[i].x += 40;
-//        vert2d[i].y += 65;
-
-        //S->setpixel(vert2d[i].x,vert2d[i].y,vert2d[i].z,Vec3(200,10,0),fPart[i].i);
         for (unsigned int j=0 ;j<3;j++){
             for (unsigned int k = 0;k<3;k++){
                 S->setpixel(vert2d[i].x+j,vert2d[i].y+k,vert2d[i].z,Vec3(255,50,0),fPart[i].i);
                 S->setpixel(vert2d[i].x+k,vert2d[i].y+j,vert2d[i].z,Vec3(255,50,0),fPart[i].i);
+            }
+        }
+    }
+}
+
+void Fire::clearFire(){
+    Vec2 vert2d[nOfParticles];
+    for (unsigned i =0;i<nOfParticles;i++){
+        vert2d[i] = World_To_Pixel(fPart[i].pos,camera,LookTo,pWidth,pWidth,1024,840);
+        for (unsigned int j=0 ;j<3;j++){
+            for (unsigned int k = 0;k<3;k++){
+                S->setpixel(vert2d[i].x+j,vert2d[i].y+k,vert2d[i].z,Vec3(255,255,255),1);
+                S->setpixel(vert2d[i].x+k,vert2d[i].y+j,vert2d[i].z,Vec3(255,255,255),1);
             }
         }
     }

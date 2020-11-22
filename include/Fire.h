@@ -44,4 +44,5 @@ class Fire{
         void initFire(Vec3& cam, Vec3& LT, float Width, float Height);
         void updateFire(Vec3& cam, Vec3& LT);
         void showFire();
+        void clearFire();
 };
