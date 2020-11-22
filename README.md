@@ -2,10 +2,9 @@
 Fire simulator using c++ and sdl
 
 Run 
-chmod +x make.sh
-./make.sh 
-
-./exefile
+1. chmod +x make.sh
+2. ./make.sh 
+3. ./exefile
 
 ## Demo
 
